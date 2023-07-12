@@ -1,0 +1,23 @@
+# Configuration of the router's HTTP server
+# Default configuration for container
+supergraph:
+  # The socket address and port to listen on
+  listen: 0.0.0.0:${env.PORT:-4000}
+
+# For demo purposes - can remove or enable homepage
+homepage:
+  enabled: true
+
+cors:
+  allow_any_origin: true
+
+# This would make debugging easier, but should be a per subgraph basis for production
+include_subgraph_errors:
+  all: true # Propagate errors from all subgraphs
+
+# This is a top-level key. It MUST define at least one of the two
+# sub-keys shown, even if you don't modify its default value.
+# rhai:
+#   # Specify a different Rhai script directory path with this key.
+#   # The path can be relative or absolute.
+#   scripts: "/dist/rhai/scripts"

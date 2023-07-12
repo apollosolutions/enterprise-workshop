@@ -1,0 +1,18 @@
+FROM node:19-buster-slim
+ENV PORT 3200
+ARG SUBGRAPH_DIR
+## Only used in Customers
+ARG ARG_DB_PASSWORD
+ARG ARG_DB_USER
+
+ENV DB_USER ${ARG_DB_USER}
+ENV DB_PASSWORD ${ARG_DB_PASSWORD}
+
+WORKDIR /app
+
+COPY ${SUBGRAPH_DIR} /app/
+
+RUN npm install
+
+EXPOSE ${PORT}
+CMD [ "npm", "start" ]

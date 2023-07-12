@@ -1,0 +1,28 @@
+steps:
+# Build the container image
+- name: 'gcr.io/cloud-builders/docker'
+  # Secrets aren't available on entry points
+  entrypoint: 'bash'
+  args: [
+    '-c',
+    'docker build -t gcr.io/federation-workshop/customers --build-arg SUBGRAPH_DIR=final/sql-customers --build-arg ARG_DB_USER=$$DB_USER --build-arg ARG_DB_PASSWORD=$$DB_PASSWORD .'
+  ]
+  secretEnv: ['DB_PASSWORD', 'DB_USER']
+
+# Push the container image to Container Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/federation-workshop/customers']
+# Deploy container image to Cloud Run
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args: ['run', 'deploy', 'subgraph-customers', '--image', 'gcr.io/federation-workshop/customers','--allow-unauthenticated', '--region', 'us-east1']
+
+images:
+- gcr.io/federation-workshop/customers
+
+availableSecrets:
+  secretManager:
+  - versionName: projects/823878303408/secrets/customer_db_password/versions/latest
+    env: 'DB_PASSWORD'
+  - versionName: projects/823878303408/secrets/customer_db_user/versions/latest
+    env: 'DB_USER'

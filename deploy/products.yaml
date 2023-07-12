@@ -1,0 +1,14 @@
+steps:
+# Build the container image
+- name: 'gcr.io/cloud-builders/docker'
+# Pass the final project directory to copy over to the docker image
+  args: ['build', '-t', 'gcr.io/federation-workshop/products', '--build-arg', 'SUBGRAPH_DIR=final/nosql-products', '.']
+# Push the container image to Container Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/federation-workshop/products']
+# Deploy container image to Cloud Run
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args: ['run', 'deploy', 'subgraph-products', '--image', 'gcr.io/federation-workshop/products','--allow-unauthenticated', '--region', 'us-east1']
+images:
+- gcr.io/federation-workshop/products
