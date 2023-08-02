@@ -5,7 +5,7 @@ steps:
   entrypoint: 'bash'
   args: [
     '-c',
-    'docker build -t gcr.io/federation-workshop/customers --build-arg SUBGRAPH_DIR=final/sql-customers --build-arg ARG_DB_USER=$$DB_USER --build-arg ARG_DB_PASSWORD=$$DB_PASSWORD .'
+    'docker build -t gcr.io/federation-workshop/customers --build-arg SUBGRAPH_DIR=sql-customers --build-arg ARG_DB_USER=$$DB_USER --build-arg ARG_DB_PASSWORD=$$DB_PASSWORD .'
   ]
   secretEnv: ['DB_PASSWORD', 'DB_USER']
 

@@ -1,12 +1,13 @@
 const resolvers = {
   Query: {
-    // @WORKSHOP 2.3.1: Create a Query resolver for order operation and return an order
-    order() {
-      return 
-    }
+    // Returns the order
+    order: (_, { id }, { dataSources }) => dataSources.ordersAPI.getOrder(id)
   },
-  // @WORKSHOP 2.3.2: Add a reference resolver for Order Entity
+  // @WORKSHOP: Add story here about resolving by references
   Order: {
+    __resolveReference: (order, { dataSources }) => dataSources.ordersAPI.getOrder(order.id),
+    buyer: root => ({ id: root.customerId }),
+    items: root => root.variantIds.map(variantId => ({id: variantId}))
   }
 };
 

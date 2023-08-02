@@ -6,18 +6,57 @@ import {gql, useQuery} from '@apollo/client';
 import { Link as ReactLink } from 'react-router-dom';
 
 // ----------  Account Summary Query Here -------------
-
-
-
-
-
-
+export const GET_ACCOUNT_SUMMARY = gql`
+  query getAccountSummary($userId: ID!) {
+    user(id: $userId) {
+      firstName
+      lastName
+      email
+      address
+      activeCart {
+        items {
+          id
+          colorway
+          size
+          price
+          parent {
+            id
+            name
+            images
+          }
+        }
+        subtotal
+      }
+      orders {
+        id
+        items {
+          id
+          size
+          colorway
+          price
+          parent {
+            id
+            name
+            images
+          }
+        }
+      }
+    }
+  }
+`;
 // -----------------------------------
 
 export default function Orders() {
   // -------------- Use Query Code Here --------------
-  // useQuery, loading, error handling, and data parsing
+  // useQuery, loading, error handling, and data parsing 
+  const response = useQuery(GET_ACCOUNT_SUMMARY, {
+    variables: {userId: '10'}
+  });
+  const {loading, error, data = {}} = response;
+  if (loading) return <Spinner />;
+  if (error) return <Error error={error.message} />;
 
+  const {firstName, lastName, email, address, activeCart, orders} = data.user || {};
   
   // -----------------------------------
   const lastOrder = orders[orders.length - 1];
