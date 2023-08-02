@@ -1,1 +1,0 @@
-## SE Workshop front-end
