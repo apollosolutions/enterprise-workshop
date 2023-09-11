@@ -128,3 +128,20 @@ type ProductVariant @key(fields: "id") {
   """
   inStock: Boolean!
 }
+
+"""
+A specific review by a user about a product. This contains all the high level details about a review including the body of the review.
+"""
+type Review @key(fields: "id") {
+  id: Int!
+  body: String!
+  product: Product!
+  user: User! 
+}
+
+"""
+A Subscription for whenever a new review has been added.
+"""
+type Subscription {
+  reviewAdded: Review
+}

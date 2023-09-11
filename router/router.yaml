@@ -21,3 +21,12 @@ include_subgraph_errors:
 #   # Specify a different Rhai script directory path with this key.
 #   # The path can be relative or absolute.
 #   scripts: "/dist/rhai/scripts"
+
+# Subscription
+subscription:
+  mode:
+    passthrough:
+       # docker setup, for local setup comment out the following section
+       subgraphs:
+        products:
+         path: /

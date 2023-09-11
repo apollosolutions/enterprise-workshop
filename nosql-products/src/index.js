@@ -1,11 +1,22 @@
 const { MongoClient } = require("mongodb");
 
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const json = bodyParser;
+const { expressMiddleware } = require("@apollo/server/express4");
+
 const gql = require("graphql-tag");
 const { readFileSync } = require("fs");
 const { ApolloServer } = require("@apollo/server");
 const { buildSubgraphSchema } = require("@apollo/subgraph");
 const { startStandaloneServer } = require("@apollo/server/standalone");
 const { ApolloServerPluginInlineTrace } = require("@apollo/server/plugin/inlineTrace");
+const {  ApolloServerPluginDrainHttpServer } = require("@apollo/server/plugin/drainHttpServer");
+
+const express = require("express");
+const { createServer } = require("http");
+const { WebSocketServer } = require("ws");
+const { useServer } = require("graphql-ws/lib/use/ws");
 
 const resolvers = require("./resolvers");
 const ProductsAPI = require("./datasources/products-api");
@@ -39,22 +50,42 @@ async function main() {
     })
   );
 
+  const app = express();
+  const httpServer = createServer(app);
+
+  const schema = buildSubgraphSchema({ typeDefs, resolvers });
+  const wsServer = new WebSocketServer({
+      server: httpServer,
+      path: "/",
+  });
+  const serverCleanup = useServer({ schema }, wsServer);
+
   const server = new ApolloServer({
-    schema: buildSubgraphSchema({ typeDefs, resolvers }),
-    instrospection: true
+    schema,
+    plugins: [
+      ApolloServerPluginDrainHttpServer({ httpServer }),
+        {
+          async serverWillStart() {
+            return {
+              async drainServer() {
+                await serverCleanup.dispose();
+              },
+            };
+          },
+        },
+      ],
+    context: async ({ req }) => new ContextValue({ req, server })
   });
 
-  const { url } = await startStandaloneServer(server, {
-    context: async ({ req }) => new ContextValue({ req, server }),
-    listen: {
-      port 
-    },
-  });
+  await server.start();
+  app.use("/", cors(), json(), expressMiddleware(server));
 
-  console.log(`🚀  Subgraph ready at ${url}`);
-  console.log(
-    `In a new terminal, run 'rover dev --url http://localhost:${port} --name ${subgraphName}`
-  );
+  httpServer.listen(port, () => {
+    console.log(`🚀 Subgraph ready at http://localhost:${port}/`);
+    console.log(
+      `In a new terminal, run 'rover dev --url http://localhost:${port} --name ${subgraphName}`
+    );
+  });
 }
 
 main();
