@@ -2,3 +2,4 @@
 node_modules
 build
 ./router/router
+.DS_Store
