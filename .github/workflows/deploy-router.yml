@@ -1,0 +1,45 @@
+name: Deploy Router to Cloud Run
+
+on:
+  push:
+    branches:
+      - summit-workshop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - id: "auth"
+      uses: "google-github-actions/auth@v0"
+      with:
+        credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+    - name: Set up Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v0
+
+    - name: Configure Docker to use gcloud as a credential helper
+      run: |
+        gcloud auth configure-docker
+
+    - name: Build Apollo Router Docker image
+      run: |
+        docker build -t gcr.io/summit-enterprise-workshop/apollo-router:latest .
+        docker images
+      working-directory: ./router
+
+    - name: Push Docker image to Google Container Registry
+      run: |
+        docker push gcr.io/summit-enterprise-workshop/apollo-router:latest
+      working-directory: ./router
+
+    - name: Deploy Apollo Router to Cloud Run
+      run: |
+        gcloud run deploy apollo-router \
+          --image gcr.io/summit-enterprise-workshop/apollo-router:latest \
+          --platform managed \
+          --region us-central1 \
+          --update-env-vars APOLLO_KEY=${{ secrets.APOLLO_KEY }},APOLLO_GRAPH_REF=${{ secrets.APOLLO_GRAPH_REF }} \
+          --allow-unauthenticated

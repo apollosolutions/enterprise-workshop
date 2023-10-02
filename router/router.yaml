@@ -1,0 +1,21 @@
+# Configuration of the router's HTTP server
+# Default configuration for container
+supergraph:
+  # The socket address and port to listen on
+  listen: 0.0.0.0:${env.PORT:-4000}
+  introspection: true
+
+# For demo purposes - can remove or enable homepage
+sandbox:
+  enabled: true
+homepage:
+  enabled: false
+
+cors:
+  allow_any_origin: true
+
+# This would make debugging easier, but should be a per subgraph basis for production
+include_subgraph_errors:
+  all: true # Propagate errors from all subgraphs
+
+## Enter Workshop Module Configs Below

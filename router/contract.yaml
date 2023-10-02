@@ -1,0 +1,14 @@
+steps:
+# Build the container image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/federation-workshop/contract-api', './router']
+# Push the container image to Container Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/federation-workshop/contract-api']
+# Deploy container image to Cloud Run
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args: ['run', 'deploy', 'contract-api', '--image', 'gcr.io/federation-workshop/contract-api','--allow-unauthenticated',
+    '--region', 'us-east1', '--update-env-vars', 'APOLLO_KEY=${_APOLLO_KEY},APOLLO_GRAPH_REF=${_APOLLO_GRAPH_REF}']
+images:
+- gcr.io/federation-workshop/contract-api
