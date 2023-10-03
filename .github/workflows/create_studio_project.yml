@@ -30,7 +30,7 @@ jobs:
     - name: Retrieve Apollo Key
       run: | 
         echo "Add code to extract token and save as a github secret"
-        export TOKEN=$(cat token.json | jq .data.graph.newKey.token)
+        echo "TOKEN=$(cat token.json | jq .data.graph.newKey.token)" >> $GITHUB_ENV
         echo "Token $TOKEN"
         echo "GH Key: ${{ secrets.GH_KEY }}"
         curl -L \
@@ -39,7 +39,7 @@ jobs:
           -H "Authorization: Bearer ${{ secrets.GH_KEY }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           https://api.github.com/repos/apollosolutions/enterprise-workshop/actions/variables \
-          -d '{"name":"token","value":"${TOKEN}"}'
+          -d '{"name":"token","value":"${{ env.TOKEN }}"}'
 
   publish:
     runs-on: ubuntu-latest
