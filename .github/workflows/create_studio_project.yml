@@ -21,7 +21,7 @@ jobs:
     steps:
     - name: Create Apollo Key
       run: |
-        curl --request POST https://graphql.api.apollographql.com' \
+        curl --request POST 'https://graphql.api.apollographql.com' \
         --header 'content-type: application/json' \
         --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
         --data '{"query":"mutation Mutation($graphId: ID!, $keyName: String, $role: UserPermission!) {\n  graph(id: $graphId) {\n    newKey(keyName: $keyName, role: $role) {\n      token\n    }\n  }\n}","variables":{"graphId":"${{github.actor}}-2023","keyName":"my-first-key","role":"CONTRIBUTOR"}}' -o token.json
