@@ -52,9 +52,9 @@ limits:
 # PQL Module
 preview_persisted_queries:
   enabled: true
-  log_unknown: true
-  safelist:
+  safelist: 
     enabled: true
     require_id: false
 apq:
-  enabled: false # APQ must be turned off
+  enabled: false #Automated persisted queries must be disabled to use PQs 
+

@@ -63,3 +63,16 @@ jobs:
           --routing-url https://subgraph-customers-j3nprurqka-ue.a.run.app \
           --schema ./final/customers-schema.graphql
 
+  pqs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create PQ List
+        run: |
+          echo "Add Curl Command to create PQ List"
+      - name: Publish PQ List
+        run: | 
+          rover persisted-queries publish Summit-SE-Workshop@current \
+          --manifest ./workshop-pq-manifest.json
+
+
+
