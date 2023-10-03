@@ -27,6 +27,8 @@ type User @key(fields: "id") {
   The users previous purchases
   """
   orders(filters: OrderFilters): [Order]
+
+  paymentMethods: [PaymentMethod]
 }
 
 """
@@ -61,4 +63,9 @@ type Order @key(fields: "id", resolvable: false) {
 type ProductVariant @key(fields: "id", resolvable: false) {
   id: ID!
   price: Float! @external
+}
+
+type PaymentMethod {
+  id: ID!
+  cardNumber: String!
 }
