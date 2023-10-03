@@ -13,7 +13,7 @@ jobs:
         echo "GITHUB_ACTOR: $GITHUB_ACTOR"
         curl --request POST 'https://graphql.api.apollographql.com' \
         --header 'content-type: application/json' \
-        --header 'X-API-Key: user:fp.d88ba77d-487c-4b97-9780-f1e4c5352a22:_60kU_wi1yLH1zt60UhxGg' \
+        --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
         --data '{"query":"mutation Mutation($accountId: ID!, $graphType: GraphType!, $hiddenFromUninvitedNonAdmin: Boolean!, $createGraphId: ID!, $title: String!, $variantCreationConfig: VariantCreationConfig) {\n  account(id: $accountId) {\n    createGraph(graphType: $graphType, hiddenFromUninvitedNonAdmin: $hiddenFromUninvitedNonAdmin, id: $createGraphId, title: $title, variantCreationConfig: $variantCreationConfig) {\n      __typename\n      ... on Service {\n        __typename\n        id\n      }\n      ... on GraphCreationError {\n        __typename\n        message\n      }\n    }\n  }\n}","variables":{"accountId":"summit-2023-enterprise-workshop","graphType":"SELF_HOSTED_SUPERGRAPH","hiddenFromUninvitedNonAdmin":false,"createGraphId":"${{github.actor}}-2023","title":"${{github.actor}}","variantCreationConfig":{"variantName":"current","buildConfigInput":{"apiDirectivePassThrough":[],"buildPipelineTrack":null,"composition":{"subgraphs":[]}}}}}'
    
   keys:
