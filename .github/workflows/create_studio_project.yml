@@ -74,6 +74,3 @@ jobs:
         run: | 
           rover persisted-queries publish Summit-SE-Workshop@current \
           --manifest ./workshop-pq-manifest.json
-
-
-
