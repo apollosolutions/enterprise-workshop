@@ -1,0 +1,12 @@
+{
+  "format": "apollo-persisted-query-manifest",
+  "version": 1,
+  "operations": [
+    {
+      "id": "Users",
+      "body": "query Users {\n users {\n firstName\n lastName\n email\n activeCart {\n items {\n colorway\n price\n size\n id\n }\n }\n }\n }",
+      "name": "Users",
+      "type": "query"
+    }
+  ]
+}

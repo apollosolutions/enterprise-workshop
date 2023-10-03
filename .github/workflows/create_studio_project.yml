@@ -10,8 +10,70 @@ jobs:
     steps:
     - name: Create Graph in Apollo Studio
       run: |
-        echo "GITHUB_ACTOR: ${GITHUB_ACTOR}"
+        echo "GITHUB_ACTOR: $GITHUB_ACTOR"
         curl --request POST 'https://graphql.api.apollographql.com' \
         --header 'content-type: application/json' \
         --header 'X-API-Key: user:fp.d88ba77d-487c-4b97-9780-f1e4c5352a22:_60kU_wi1yLH1zt60UhxGg' \
-        --data '{"query":"mutation CreateGraph($graphType: GraphType!, $hiddenFromUninvitedNonAdmin: Boolean!, $createGraphId: ID!, $title: String!, $accountId: ID!) {\n  account(id: $accountId) {\n    createGraph(graphType: $graphType, hiddenFromUninvitedNonAdmin: $hiddenFromUninvitedNonAdmin, id: $createGraphId, title: $title) {\n      ... on Service {\n        accountId\n      }\n    }\n      }\n    }\n   \n \n","variables":{"graphType":"SELF_HOSTED_SUPERGRAPH","hiddenFromUninvitedNonAdmin":false,"createGraphId":"${GITUB_ACTOR}","title":"${GITHUB_ACTOR}","accountId":"summit-2023-enterprise-workshop"},"operationName":"CreateGraph"}'
+        --data '{"query":"mutation Mutation($accountId: ID!, $graphType: GraphType!, $hiddenFromUninvitedNonAdmin: Boolean!, $createGraphId: ID!, $title: String!, $variantCreationConfig: VariantCreationConfig) {\n  account(id: $accountId) {\n    createGraph(graphType: $graphType, hiddenFromUninvitedNonAdmin: $hiddenFromUninvitedNonAdmin, id: $createGraphId, title: $title, variantCreationConfig: $variantCreationConfig) {\n      __typename\n      ... on Service {\n        __typename\n        id\n      }\n      ... on GraphCreationError {\n        __typename\n        message\n      }\n    }\n  }\n}","variables":{"accountId":"summit-2023-enterprise-workshop","graphType":"SELF_HOSTED_SUPERGRAPH","hiddenFromUninvitedNonAdmin":false,"createGraphId":"${{github.actor}}-2023","title":"${{github.actor}}","variantCreationConfig":{"variantName":"current","buildConfigInput":{"apiDirectivePassThrough":[],"buildPipelineTrack":null,"composition":{"subgraphs":[]}}}}}'
+   
+  keys:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Create Apollo Key
+      run: |
+        curl --request POST 'https://graphql.api.apollographql.com' \
+        --header 'content-type: application/json' \
+        --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
+        --data '{"query":"mutation Mutation($graphId: ID!, $keyName: String, $role: UserPermission!) {\n  graph(id: $graphId) {\n    newKey(keyName: $keyName, role: $role) {\n      token\n    }\n  }\n}","variables":{"graphId":"${{github.actor}}-2023","keyName":"my-first-key","role":"CONTRIBUTOR"}}' -o token.json
+        cat token.json
+
+    - name: Retrieve Apollo Key
+      run: | 
+        echo "Add code to extract token and save as a github secret"
+
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install Rover
+      run: | 
+        curl -sSL https://rover.apollo.dev/nix/v0.8.1 | sh
+        echo "$HOME/.rover/bin" >> $GITHUB_PATH
+
+    - name: Rover Subgraph Publish Products
+      run: | 
+        rover subgraph publish ${{secrets.APOLLO_GRAPH_REF }} \
+          --name products \
+          --routing-url https://https://subgraph-products-j3nprurqka-ue.a.run.app \
+          --schema ./products-schema.graphql
+
+    - name: Rover Subgraph Publish Orders
+      run: | 
+        rover subgraph publish ${{secrets.APOLLO_GRAPH_REF}} \
+          --name orders
+          --routing-url https://subgraph-orders-j3nprurqka-ue.a.run.app \
+          --schema ./orders-schema.graphql
+
+    - name: Rover Subgraph Publish Customers
+      run: |
+        rover subgraph publish ${{secrets.APOLLO_GRAPH_REF}} \
+          --name customers
+          --routing-url https://subgraph-customers-j3nprurqka-ue.a.run.app \
+          --schema ./final/customers-schema.graphql
+
+  pqs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create PQ List
+        run: |
+          echo "Add Curl Command to create PQ List"
+      - name: Publish PQ List
+        run: | 
+          rover persisted-queries publish Summit-SE-Workshop@current \
+          --manifest ./workshop-pq-manifest.json
+
+
+

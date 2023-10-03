@@ -41,6 +41,27 @@ subscription:
         products:
          path: /
 
+# Operation Limits
+limits:
+  max_depth: 5
+  max_height: 10
+  max_aliases: 3
+
 # Co-Processor Module
 
+coprocessor:
+  url: https://coprocessor-wn3vwa6nlq-ue.a.run.app # Required. Replace with the URL of your coprocessor's HTTP endpoint.
+  timeout: 2s # The timeout for all coprocessor requests. Defaults to 1 second (1s)
+  router: # This coprocessor hooks into the `RouterService`
+    response: # By including this key, the `RouterService` sends a coprocessor request whenever it first receives a client request.
+      body: true # By including this key the co-processor can modify the body of the response
+
 # PQL Module
+preview_persisted_queries:
+  enabled: true
+  safelist: 
+    enabled: true
+    require_id: false
+apq:
+  enabled: false #Automated persisted queries must be disabled to use PQs 
+
