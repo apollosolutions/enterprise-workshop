@@ -49,7 +49,7 @@ jobs:
           -H "Authorization: Bearer ${{ secrets.GH_KEY }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           https://api.github.com/repos/${{github.repository}}/actions/variables \
-          -d '{"name":"token","value":"$TOKEN"}'
+          -d '{"name":"token","value":"${TOKEN}"}'
 
   publish:
     uses: ./.github/workflows/publish-subgraph.yml
