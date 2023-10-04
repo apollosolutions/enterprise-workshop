@@ -7,7 +7,7 @@ on:
       - '**.yml'
 
 env:
-  GEN: "-2023-3"
+  GEN: "-2023-4"
 
 jobs:
   create:
@@ -22,6 +22,7 @@ jobs:
         --data '{"query":"mutation Mutation($accountId: ID!, $graphType: GraphType!, $hiddenFromUninvitedNonAdmin: Boolean!, $createGraphId: ID!, $title: String!, $variantCreationConfig: VariantCreationConfig) {\n  account(id: $accountId) {\n    createGraph(graphType: $graphType, hiddenFromUninvitedNonAdmin: $hiddenFromUninvitedNonAdmin, id: $createGraphId, title: $title, variantCreationConfig: $variantCreationConfig) {\n      __typename\n      ... on Service {\n        __typename\n        id\n      }\n      ... on GraphCreationError {\n        __typename\n        message\n      }\n    }\n  }\n}","variables":{"accountId":"summit-2023-enterprise-workshop","graphType":"SELF_HOSTED_SUPERGRAPH","hiddenFromUninvitedNonAdmin":false,"createGraphId":"${{github.actor}}${{ env.GEN }}","title":"${{github.actor}}","variantCreationConfig":{"variantName":"current","buildConfigInput":{"apiDirectivePassThrough":[],"buildPipelineTrack":null,"composition":{"subgraphs":[]}}}}}'
    
   keys:
+    needs: create
     runs-on: ubuntu-latest
     steps:
     - name: Sleep
@@ -53,10 +54,12 @@ jobs:
 
 
   publish:
+    needs: keys
     uses: ./.github/workflows/publish-subgraph.yml
     secrets: inherit
 
   pqs:
+    needs: publish
     runs-on: ubuntu-latest
     steps:
       - name: Create PQ List
@@ -73,10 +76,12 @@ jobs:
           --manifest ./workshop-pq-manifest.json
 
   deploy:
+    needs: pqs
     uses: ./.github/workflows/deploy-router.yml
     secrets: inherit
 
   install-url:
+    needs: deploy
     runs-on: ubuntu-latest
     steps: 
       - name: Get URL

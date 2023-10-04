@@ -8,11 +8,13 @@ on:
   workflow_call:
 
 env:
-  APOLLO_KEY: ${{ vars.TOKEN }}
-  GEN: "-2023-3"
+  GEN: "-2023-4"
   
 jobs:
   publish:
+    env:
+      APOLLO_KEY: ${{ env.TOKEN }}
+
     runs-on: ubuntu-latest
 
     steps:
