@@ -5,6 +5,7 @@ on:
     paths:
       - '**.yaml'
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   deploy:

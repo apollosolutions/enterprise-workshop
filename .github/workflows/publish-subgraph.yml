@@ -5,6 +5,7 @@ on:
     paths:
       - '**.graphql'
   workflow_dispatch:
+  workflow_call:
   
 jobs:
   publish:
