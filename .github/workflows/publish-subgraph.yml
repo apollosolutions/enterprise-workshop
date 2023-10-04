@@ -6,6 +6,9 @@ on:
       - '**.graphql'
   workflow_dispatch:
   workflow_call:
+
+env:
+  APOLLO_KEY: ${{ secrets.TOKEN }}
   
 jobs:
   publish:
