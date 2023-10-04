@@ -52,6 +52,10 @@ jobs:
     needs: deploy
     runs-on: ubuntu-latest
     steps: 
+      - id: "auth"
+        uses: "google-github-actions/auth@v0"
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
       - name: Get URL
         run: | 
           gcloud run services describe ${{github.actor}}-router --region us-central1 --format 'value(status.url)' > url.json
