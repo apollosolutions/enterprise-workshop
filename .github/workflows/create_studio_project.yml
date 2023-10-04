@@ -30,7 +30,6 @@ jobs:
 
     - name: Create Apollo Key
       run: |
-        sleep 10
         curl --request POST 'https://graphql.api.apollographql.com' \
         --header 'content-type: application/json' \
         --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
