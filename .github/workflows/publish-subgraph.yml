@@ -8,7 +8,7 @@ on:
   workflow_call:
 
 env:
-  APOLLO_KEY: ${{ env.TOKEN }}
+  APOLLO_KEY: ${{ vars.TOKEN }}
   GEN: "-2023-3"
   
 jobs:
