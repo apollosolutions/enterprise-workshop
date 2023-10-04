@@ -1,11 +1,6 @@
 name: Deploy Router to Cloud Run
 
-on:
-  push:
-    paths:
-      - '**.yaml'
-  workflow_dispatch:
-  workflow_call:
+on: workflow_dispatch
 
 env:
   GEN: "-2023-5"
@@ -17,6 +12,7 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      
     - id: "auth"
       uses: "google-github-actions/auth@v0"
       with:
@@ -32,26 +28,32 @@ jobs:
     - name: Add Secret data
       run: gcloud secrets versions add --data-file=./router/router.yaml ${{github.actor}}
 
-    - name: Configure Docker to use gcloud as a credential helper
-      run: |
-        gcloud auth configure-docker
+    #- name: Configure Docker to use gcloud as a credential helper
+    #  run: |
+    #    gcloud auth configure-docker
 
-    - name: Build Apollo Router Docker image
-      run: |
-        docker build -t gcr.io/summit-enterprise-workshop/${{github.actor}}-router:latest .
-        docker images
-      working-directory: ./router
+    #- name: Build Apollo Router Docker image
+    #  run: |
+    #    docker build -t gcr.io/summit-enterprise-workshop/${{github.actor}}-router:latest .
+    #    docker images
+    #  working-directory: ./router
 
-    - name: Push Docker image to Google Container Registry
-      run: |
-        docker push gcr.io/summit-enterprise-workshop/${{github.actor}}-router:latest
-      working-directory: ./router
+    #- name: Push Docker image to Google Container Registry
+    #  run: |
+    #    docker push gcr.io/summit-enterprise-workshop/${{github.actor}}-router:latest
+    #  working-directory: ./router
 
-    - name: Deploy Apollo Router to Cloud Run
+    - name: Depoy Apollo Router to Cloud Run
       run: |
-        gcloud run deploy ${{github.actor}}-router \
-          --image gcr.io/summit-enterprise-workshop/${{github.actor}}-router:latest \
-          --platform managed \
-          --region us-central1 \
-          --update-env-vars APOLLO_KEY=${{ vars.TOKEN }},APOLLO_GRAPH_REF=${{github.actor}}${{env.GEN}}@current \
-          --allow-unauthenticated
+        gcloud run deploy ${{github.actor}}-router --image ghcr.io/apollographql/router:v1.30.1 \
+          --update-secrets=/dist/config/router.yaml=${{github.actor}}:latest \
+          --update-env-vars APOLLO_ROUTER_HOT_RELOAD=true
+      
+    #- name: Deploy Apollo Router to Cloud Run
+    #  run: |
+    #    gcloud run deploy ${{github.actor}}-router \
+    #      --image gcr.io/summit-enterprise-workshop/${{github.actor}}-router:latest \
+    #      --platform managed \
+    #      --region us-central1 \
+    #      --update-env-vars APOLLO_KEY=${{ vars.TOKEN }},APOLLO_GRAPH_REF=${{github.actor}}${{env.GEN}}@current \
+    #      --allow-unauthenticated
