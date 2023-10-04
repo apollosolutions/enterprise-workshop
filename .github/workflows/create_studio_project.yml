@@ -18,6 +18,10 @@ jobs:
   keys:
     runs-on: ubuntu-latest
     steps:
+    - name: Sleep
+      run: sleep 10s
+      shell: bash
+      
     - name: Create Apollo Key
       run: |
         sleep 10
