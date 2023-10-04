@@ -24,8 +24,12 @@ jobs:
             --header 'content-type: application/json' \
             --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
             --url 'https://graphql.api.apollographql.com/api/graphql' \
-            --data '{"query":"mutation Mutation($graphId: ID!, $name: String!, $description: String, $linkedVariants: [String!]) {\n  graph(id: $graphId) {\n    createPersistedQueryList(name: $name, description: $description, linkedVariants: $linkedVariants) {\n      ... on CreatePersistedQueryListResult {\n        persistedQueryList {\n          createdAt\n        }\n      }\n    }\n  }\n}","variables":{"graphId":"${{github.actor}}${{ env.GEN }}","name":"pq_list","description":"Our PQ List","linkedVariants":["current"]}}'
-     
+            --data '{"query":"mutation Mutation($graphId: ID!, $name: String!, $description: String, $linkedVariants: [String!]) {\n  graph(id: $graphId) {\n    createPersistedQueryList(name: $name, description: $description, linkedVariants: $linkedVariants) {\n      ... on CreatePersistedQueryListResult {\n        persistedQueryList {\n          id\n    createdAt\n        }\n      }\n    }\n  }\n}","variables":{"graphId":"${{github.actor}}${{ env.GEN }}","name":"pq_list","description":"Our PQ List","linkedVariants":["current"]}}' -o pq.json
+          cat pq.json
+
+      - name: Set Env
+        run: echo "PQ_ID=$(cat pq.json | jq .data.graph.newKey.token)" >> $GITHUB_ENV
+
       - name: Install Rover
         run: | 
           curl -sSL https://rover.apollo.dev/nix/v0.19.0 | sh
