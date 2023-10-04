@@ -28,7 +28,8 @@ jobs:
       run: | 
         rover subgraph publish ${{github.actor}}${{ env.GEN }}@current \
           --name products \
-          --routing-url https://https://subgraph-products-j3nprurqka-ue.a.run.app \
+          --convert \
+          --routing-url https://subgraph-products-j3nprurqka-ue.a.run.app \
           --schema ./products-schema.graphql
 
     - name: Rover Subgraph Publish Orders
