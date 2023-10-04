@@ -77,10 +77,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Publish PQ List
-        env:
-          APOLLO_KEY: ${{ env.TOKEN }}
+      - name: Publish PQ List          
         run: | 
+          export APOLLO_KEY="${{ env.TOKEN }}"
           rover persisted-queries publish ${{github.actor}}${{env.GEN}}@current \
             --manifest ./final/workshop-pq-manifest.json
 
