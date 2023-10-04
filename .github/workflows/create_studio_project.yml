@@ -24,20 +24,17 @@ jobs:
         --header 'content-type: application/json' \
         --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
         --data '{"query":"mutation Mutation($graphId: ID!, $keyName: String, $role: UserPermission!) {\n  graph(id: $graphId) {\n    newKey(keyName: $keyName, role: $role) {\n      token\n    }\n  }\n}","variables":{"graphId":"${{github.actor}}-2023","keyName":"my-first-key","role":"CONTRIBUTOR"}}' -o token.json
-        cat token.json
 
     - name: Retrieve Apollo Key
       run: | 
         echo "Add code to extract token and save as a github secret"
         echo "TOKEN=$(cat token.json | jq .data.graph.newKey.token)" >> $GITHUB_ENV
-        echo "Token $TOKEN"
-        echo "GH Key: ${{ secrets.GH_KEY }}"
         curl -L \
           -X POST \
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ secrets.GH_KEY }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
-          https://api.github.com/repos/apollosolutions/enterprise-workshop/actions/variables \
+          https://api.github.com/repos/apollosolutions/${{github.repository}}/actions/variables \
           -d '{"name":"token","value":"${{ env.TOKEN }}"}'
 
   publish:
