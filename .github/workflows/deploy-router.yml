@@ -46,5 +46,5 @@ jobs:
           --image gcr.io/summit-enterprise-workshop/${{github.actor}}-router:latest \
           --platform managed \
           --region us-central1 \
-          --update-env-vars APOLLO_KEY=${{ secrets.APOLLO_KEY }},APOLLO_GRAPH_REF=${{github.actor}}${{env.GEN}}@current \
+          --update-env-vars APOLLO_KEY=${{ env.TOKEN }},APOLLO_GRAPH_REF=${{github.actor}}${{env.GEN}}@current \
           --allow-unauthenticated
