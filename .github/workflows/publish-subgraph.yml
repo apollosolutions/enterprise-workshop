@@ -26,7 +26,7 @@ jobs:
 
     - name: Rover Subgraph Publish Products
       run: | 
-        APOLLO_KEY=${{ env.TOKEN }} rover subgraph publish ${{github.actor}}${{ env.GEN }}@current \
+        rover subgraph publish ${{github.actor}}${{ env.GEN }}@current \
           --name products \
           --convert \
           --routing-url https://subgraph-products-j3nprurqka-ue.a.run.app \
@@ -34,14 +34,14 @@ jobs:
 
     - name: Rover Subgraph Publish Orders
       run: | 
-        APOLLO_KEY=${{ env.TOKEN }} rover subgraph publish ${{github.actor}}${{ env.GEN }}@current \
+        rover subgraph publish ${{github.actor}}${{ env.GEN }}@current \
           --name orders
           --routing-url https://subgraph-orders-j3nprurqka-ue.a.run.app \
           --schema ./orders-schema.graphql
 
     - name: Rover Subgraph Publish Customers
       run: |
-        APOLLO_KEY=${{ env.TOKEN }} rover subgraph publish ${{github.actor}}${{ env.GEN }}@current \
+        rover subgraph publish ${{github.actor}}${{ env.GEN }}@current \
           --name customers
           --routing-url https://subgraph-customers-j3nprurqka-ue.a.run.app \
           --schema ./final/customers-schema.graphql
