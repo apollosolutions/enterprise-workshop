@@ -40,7 +40,7 @@ jobs:
       run: | 
         echo "Add code to extract token and save as a github secret"
         echo "TOKEN=$(cat token.json | jq .data.graph.newKey.token)" >> $GITHUB_ENV
-        echo "${{ env.TOKEN }}"
+        echo "$GITHUB_ENV"
         cat token.json
         curl -L \
           -X POST \
