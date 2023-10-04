@@ -1,4 +1,4 @@
-name: Create Studio Account
+name: Setup Studio Account
 
 on:
   workflow_run:
@@ -28,7 +28,7 @@ jobs:
           cat pq.json
 
       - name: Set Env
-        run: echo "PQ_ID=$(cat pq.json | jq .data.graph.newKey.token)" >> $GITHUB_ENV
+        run: echo "PQ_ID=$(cat pq.json | jq .data.graph.createPersistedQueryList.id)" >> $GITHUB_ENV
 
       - name: Install Rover
         run: | 
@@ -40,7 +40,7 @@ jobs:
 
       - name: Publish PQ List          
         run: | 
-          rover persisted-queries publish ${{github.actor}}${{env.GEN}}@current \
+          rover persisted-queries publish --graph-id ${{github.actor}}${{env.GEN}} --list-id ${{env.PQ_ID}} \
             --manifest ./final/workshop-pq-manifest.json
 
   deploy:
