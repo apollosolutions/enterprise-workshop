@@ -52,7 +52,6 @@ jobs:
           https://api.github.com/repos/${{github.repository}}/actions/variables \
           -d '{"name":"token","value":${{ env.TOKEN }} }'
 
-
   publish:
     needs: keys
     uses: ./.github/workflows/publish-subgraph.yml
