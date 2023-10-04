@@ -2,8 +2,9 @@ name: Deploy Router to Cloud Run
 
 on:
   push:
-    branches:
-      - summit-workshop
+    paths:
+      - '**.yaml'
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -26,19 +27,19 @@ jobs:
 
     - name: Build Apollo Router Docker image
       run: |
-        docker build -t gcr.io/summit-enterprise-workshop/apollo-router:latest .
+        docker build -t gcr.io/summit-enterprise-workshop/${{github.actor}}-router:latest .
         docker images
       working-directory: ./router
 
     - name: Push Docker image to Google Container Registry
       run: |
-        docker push gcr.io/summit-enterprise-workshop/apollo-router:latest
+        docker push gcr.io/summit-enterprise-workshop/${{github.actor}}-router:latest
       working-directory: ./router
 
     - name: Deploy Apollo Router to Cloud Run
       run: |
-        gcloud run deploy apollo-router \
-          --image gcr.io/summit-enterprise-workshop/apollo-router:latest \
+        gcloud run deploy ${{github.actor}}-router \
+          --image gcr.io/summit-enterprise-workshop/${{github.actor}}-router:latest \
           --platform managed \
           --region us-central1 \
           --update-env-vars APOLLO_KEY=${{ secrets.APOLLO_KEY }},APOLLO_GRAPH_REF=${{ secrets.APOLLO_GRAPH_REF }} \

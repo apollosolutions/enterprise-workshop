@@ -2,7 +2,6 @@ name: Create Studio Account
 
 on:
   create:
-  push:
 
 jobs:
   create:
@@ -42,46 +41,42 @@ jobs:
           -d '{"name":"token","value":"${{ env.TOKEN }}"}'
 
   publish:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-
-    - name: Install Rover
-      run: | 
-        curl -sSL https://rover.apollo.dev/nix/v0.8.1 | sh
-        echo "$HOME/.rover/bin" >> $GITHUB_PATH
-
-    - name: Rover Subgraph Publish Products
-      run: | 
-        rover subgraph publish ${{secrets.APOLLO_GRAPH_REF }} \
-          --name products \
-          --routing-url https://https://subgraph-products-j3nprurqka-ue.a.run.app \
-          --schema ./products-schema.graphql
-
-    - name: Rover Subgraph Publish Orders
-      run: | 
-        rover subgraph publish ${{secrets.APOLLO_GRAPH_REF}} \
-          --name orders
-          --routing-url https://subgraph-orders-j3nprurqka-ue.a.run.app \
-          --schema ./orders-schema.graphql
-
-    - name: Rover Subgraph Publish Customers
-      run: |
-        rover subgraph publish ${{secrets.APOLLO_GRAPH_REF}} \
-          --name customers
-          --routing-url https://subgraph-customers-j3nprurqka-ue.a.run.app \
-          --schema ./final/customers-schema.graphql
+    uses: ./.github/workflows/publish-subgraph.yml
+    secrets: inherit
 
   pqs:
     runs-on: ubuntu-latest
     steps:
       - name: Create PQ List
         run: |
-          echo "Add Curl Command to create PQ List"
+          curl --request POST \
+            --header 'content-type: application/json' \
+            --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
+            --url 'https://graphql.api.apollographql.com/api/graphql' \
+            --data '{"query":"mutation Mutation($graphId: ID!, $name: String!, $description: String, $linkedVariants: [String!]) {\n  graph(id: $graphId) {\n    createPersistedQueryList(name: $name, description: $description, linkedVariants: $linkedVariants) {\n      ... on CreatePersistedQueryListResult {\n        persistedQueryList {\n          createdAt\n        }\n      }\n    }\n  }\n}","variables":{"graphId":"${{github.actor}}-2023","name":"pq_list","description":"Our PQ List","linkedVariants":["current"]}}'
+      
       - name: Publish PQ List
         run: | 
           rover persisted-queries publish Summit-SE-Workshop@current \
           --manifest ./workshop-pq-manifest.json
+
+  deploy:
+    uses: ./.github/workflows/deploy-router.yml
+    secrets: inherit
+
+  install-url:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Get URL
+        run: | 
+          gcloud run services describe ${{github.actor}}-router --region us-central1 --format 'value(status.url)' > url.json
+          echo "URL=$(cat url.json)" >> $GITHUB_ENV
+      - name: Set URL
+        run: |
+          curl --request POST \
+            --header 'content-type: application/json' \
+            --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
+            --url 'https://graphql.api.apollographql.com/api/graphql' \
+            --data '{"query":"mutation UpdateURL($name: String!, $graphId: ID!, $url: String) {\n  graph(id: $graphId) {\n    variant(name: $name) {\n      updateURL(url: $url) {\n        createdAt\n      }\n    }\n  }\n}","variables":{"name":"current","graphId":"${{github.actor}}-2023","url":"${{ env.URL }}"}}'
+          
 
