@@ -13,7 +13,7 @@ env:
 jobs:
   publish:
     env:
-      APOLLO_KEY: ${{ env.TOKEN }}
+      APOLLO_KEY: ${{ vars.TOKEN }}
 
     runs-on: ubuntu-latest
 
