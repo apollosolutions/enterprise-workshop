@@ -36,12 +36,13 @@ jobs:
         --data '{"query":"mutation Mutation($graphId: ID!, $keyName: String, $role: UserPermission!) {\n  graph(id: $graphId) {\n    newKey(keyName: $keyName, role: $role) {\n      token\n    }\n  }\n}","variables":{"graphId":"${{github.actor}}${{ env.GEN }}","keyName":"my-first-key","role":"CONTRIBUTOR"}}' -o token.json
         cat token.json
 
+    - name: Set Env
+      run: echo "TOKEN=$(cat token.json | jq .data.graph.newKey.token)" >> $GITHUB_ENV
+
     - name: Retrieve Apollo Key
       run: | 
         echo "Add code to extract token and save as a github secret"
-        echo "TOKEN=$(cat token.json | jq .data.graph.newKey.token)"
-        echo "TOKEN=$(cat token.json | jq .data.graph.newKey.token)" >> "$GITHUB_ENV"
-        echo "Token is: ${{env.token}}"
+        echo "Token is: ${{env.TOKEN}}"
         curl -L \
           -X POST \
           -H "Accept: application/vnd.github+json" \
