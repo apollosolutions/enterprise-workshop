@@ -1,6 +1,6 @@
 name: Deploy Router to Cloud Run
 
-on: workflow_dispatch
+on: workflow_call
 
 env:
   GEN: "-2023-5"
