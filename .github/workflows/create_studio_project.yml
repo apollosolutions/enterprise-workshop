@@ -2,6 +2,9 @@ name: Create Studio Account
 
 on:
   create:
+  push:
+    paths:
+      - '**.yml'
 
 env:
   GEN: "-2023-2"
