@@ -34,6 +34,7 @@ jobs:
         --header 'content-type: application/json' \
         --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
         --data '{"query":"mutation Mutation($graphId: ID!, $keyName: String, $role: UserPermission!) {\n  graph(id: $graphId) {\n    newKey(keyName: $keyName, role: $role) {\n      token\n    }\n  }\n}","variables":{"graphId":"${{github.actor}}${{ env.GEN }}","keyName":"my-first-key","role":"CONTRIBUTOR"}}' -o token.json
+        cat token.json
 
     - name: Retrieve Apollo Key
       run: | 
