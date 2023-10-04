@@ -37,10 +37,11 @@ jobs:
         cat token.json
 
     - name: Retrieve Apollo Key
+      shell: bash
       run: | 
         echo "Add code to extract token and save as a github secret"
         echo "TOKEN=$(cat token.json | jq .data.graph.newKey.token)" >> $GITHUB_ENV
-        echo "$GITHUB_ENV"
+        echo "Env: $GITHUB_ENV"
         cat token.json
         curl -L \
           -X POST \
