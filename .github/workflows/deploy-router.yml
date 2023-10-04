@@ -8,7 +8,7 @@ on:
   workflow_call:
 
 env:
-  GEN: "-2023-2"
+  GEN: "-2023-3"
 
 jobs:
   deploy:

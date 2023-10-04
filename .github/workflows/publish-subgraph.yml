@@ -9,7 +9,7 @@ on:
 
 env:
   APOLLO_KEY: ${{ secrets.TOKEN }}
-  GEN: "-2023-2"
+  GEN: "-2023-3"
   
 jobs:
   publish:
