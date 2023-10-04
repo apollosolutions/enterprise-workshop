@@ -75,6 +75,8 @@ jobs:
           echo "$HOME/.rover/bin" >> $GITHUB_PATH
 
       - name: Publish PQ List
+        env:
+          APOLLO_KEY: ${{ env.TOKEN }}
         run: | 
           rover persisted-queries publish ${{github.actor}}${{env.GEN}}@current \
             --manifest ./workshop-pq-manifest.json
