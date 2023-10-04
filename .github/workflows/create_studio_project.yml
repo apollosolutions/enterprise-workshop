@@ -78,7 +78,7 @@ jobs:
         env:
           APOLLO_KEY: ${{ env.TOKEN }}
         run: | 
-          cat ./final/workshop-pq-manifest.json
+          ls .
           rover persisted-queries publish ${{github.actor}}${{env.GEN}}@current \
             --manifest ./final/workshop-pq-manifest.json
 
