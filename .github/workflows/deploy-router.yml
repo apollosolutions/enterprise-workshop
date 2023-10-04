@@ -25,6 +25,13 @@ jobs:
     - name: Set up Google Cloud SDK
       uses: google-github-actions/setup-gcloud@v0
 
+    - name: Create Secret for Cloud Run
+      run: gcloud secrets create ${{github.actor}}
+      continue-on-error: true
+
+    - name: Add Secret data
+      run: gcloud secrets versions add --data-file=./router/router.yaml ${{github.actor}}
+
     - name: Configure Docker to use gcloud as a credential helper
       run: |
         gcloud auth configure-docker
