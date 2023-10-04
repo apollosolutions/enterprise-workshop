@@ -74,11 +74,13 @@ jobs:
           curl -sSL https://rover.apollo.dev/nix/v0.19.0 | sh
           echo "$HOME/.rover/bin" >> $GITHUB_PATH
 
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Publish PQ List
         env:
           APOLLO_KEY: ${{ env.TOKEN }}
         run: | 
-          ls .
           rover persisted-queries publish ${{github.actor}}${{env.GEN}}@current \
             --manifest ./final/workshop-pq-manifest.json
 
