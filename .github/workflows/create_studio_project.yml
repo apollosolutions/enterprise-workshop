@@ -68,11 +68,16 @@ jobs:
             --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
             --url 'https://graphql.api.apollographql.com/api/graphql' \
             --data '{"query":"mutation Mutation($graphId: ID!, $name: String!, $description: String, $linkedVariants: [String!]) {\n  graph(id: $graphId) {\n    createPersistedQueryList(name: $name, description: $description, linkedVariants: $linkedVariants) {\n      ... on CreatePersistedQueryListResult {\n        persistedQueryList {\n          createdAt\n        }\n      }\n    }\n  }\n}","variables":{"graphId":"${{github.actor}}${{ env.GEN }}","name":"pq_list","description":"Our PQ List","linkedVariants":["current"]}}'
-      
+     
+      - name: Install Rover
+        run: | 
+          curl -sSL https://rover.apollo.dev/nix/v0.8.1 | sh
+          echo "$HOME/.rover/bin" >> $GITHUB_PATH
+
       - name: Publish PQ List
         run: | 
-          rover persisted-queries publish Summit-SE-Workshop@current \
-          --manifest ./workshop-pq-manifest.json
+          rover persisted-queries publish ${{github.actor}}${{env.GEN}}@current \
+            --manifest ./workshop-pq-manifest.json
 
   deploy:
     needs: pqs
