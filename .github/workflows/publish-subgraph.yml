@@ -9,6 +9,7 @@ on:
 
 env:
   APOLLO_KEY: ${{ secrets.TOKEN }}
+  GEN: "-2023-2"
   
 jobs:
   publish:
@@ -25,21 +26,21 @@ jobs:
 
     - name: Rover Subgraph Publish Products
       run: | 
-        rover subgraph publish ${{github.actor}}-2023-1@current \
+        rover subgraph publish ${{github.actor}}${{ env.GEN }}@current \
           --name products \
           --routing-url https://https://subgraph-products-j3nprurqka-ue.a.run.app \
           --schema ./products-schema.graphql
 
     - name: Rover Subgraph Publish Orders
       run: | 
-        rover subgraph publish ${{github.actor}}-2023-1@current \
+        rover subgraph publish ${{github.actor}}${{ env.GEN }}@current \
           --name orders
           --routing-url https://subgraph-orders-j3nprurqka-ue.a.run.app \
           --schema ./orders-schema.graphql
 
     - name: Rover Subgraph Publish Customers
       run: |
-        rover subgraph publish ${{github.actor}}-2023-1@current \
+        rover subgraph publish ${{github.actor}}${{ env.GEN }}@current \
           --name customers
           --routing-url https://subgraph-customers-j3nprurqka-ue.a.run.app \
           --schema ./final/customers-schema.graphql

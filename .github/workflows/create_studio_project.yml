@@ -3,6 +3,9 @@ name: Create Studio Account
 on:
   create:
 
+env:
+  GEN: "-2023-2"
+
 jobs:
   create:
     runs-on: ubuntu-latest
@@ -13,7 +16,7 @@ jobs:
         curl --request POST 'https://graphql.api.apollographql.com' \
         --header 'content-type: application/json' \
         --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
-        --data '{"query":"mutation Mutation($accountId: ID!, $graphType: GraphType!, $hiddenFromUninvitedNonAdmin: Boolean!, $createGraphId: ID!, $title: String!, $variantCreationConfig: VariantCreationConfig) {\n  account(id: $accountId) {\n    createGraph(graphType: $graphType, hiddenFromUninvitedNonAdmin: $hiddenFromUninvitedNonAdmin, id: $createGraphId, title: $title, variantCreationConfig: $variantCreationConfig) {\n      __typename\n      ... on Service {\n        __typename\n        id\n      }\n      ... on GraphCreationError {\n        __typename\n        message\n      }\n    }\n  }\n}","variables":{"accountId":"summit-2023-enterprise-workshop","graphType":"SELF_HOSTED_SUPERGRAPH","hiddenFromUninvitedNonAdmin":false,"createGraphId":"${{github.actor}}-2023-1","title":"${{github.actor}}","variantCreationConfig":{"variantName":"current","buildConfigInput":{"apiDirectivePassThrough":[],"buildPipelineTrack":null,"composition":{"subgraphs":[]}}}}}'
+        --data '{"query":"mutation Mutation($accountId: ID!, $graphType: GraphType!, $hiddenFromUninvitedNonAdmin: Boolean!, $createGraphId: ID!, $title: String!, $variantCreationConfig: VariantCreationConfig) {\n  account(id: $accountId) {\n    createGraph(graphType: $graphType, hiddenFromUninvitedNonAdmin: $hiddenFromUninvitedNonAdmin, id: $createGraphId, title: $title, variantCreationConfig: $variantCreationConfig) {\n      __typename\n      ... on Service {\n        __typename\n        id\n      }\n      ... on GraphCreationError {\n        __typename\n        message\n      }\n    }\n  }\n}","variables":{"accountId":"summit-2023-enterprise-workshop","graphType":"SELF_HOSTED_SUPERGRAPH","hiddenFromUninvitedNonAdmin":false,"createGraphId":"${{github.actor}}${{ env.GEN }}","title":"${{github.actor}}","variantCreationConfig":{"variantName":"current","buildConfigInput":{"apiDirectivePassThrough":[],"buildPipelineTrack":null,"composition":{"subgraphs":[]}}}}}'
    
   keys:
     runs-on: ubuntu-latest
@@ -21,14 +24,14 @@ jobs:
     - name: Sleep
       run: sleep 10s
       shell: bash
-      
+
     - name: Create Apollo Key
       run: |
         sleep 10
         curl --request POST 'https://graphql.api.apollographql.com' \
         --header 'content-type: application/json' \
         --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
-        --data '{"query":"mutation Mutation($graphId: ID!, $keyName: String, $role: UserPermission!) {\n  graph(id: $graphId) {\n    newKey(keyName: $keyName, role: $role) {\n      token\n    }\n  }\n}","variables":{"graphId":"${{github.actor}}-2023-1","keyName":"my-first-key","role":"CONTRIBUTOR"}}' -o token.json
+        --data '{"query":"mutation Mutation($graphId: ID!, $keyName: String, $role: UserPermission!) {\n  graph(id: $graphId) {\n    newKey(keyName: $keyName, role: $role) {\n      token\n    }\n  }\n}","variables":{"graphId":"${{github.actor}}${{ env.GEN }}","keyName":"my-first-key","role":"CONTRIBUTOR"}}' -o token.json
 
     - name: Retrieve Apollo Key
       run: | 
@@ -55,7 +58,7 @@ jobs:
             --header 'content-type: application/json' \
             --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
             --url 'https://graphql.api.apollographql.com/api/graphql' \
-            --data '{"query":"mutation Mutation($graphId: ID!, $name: String!, $description: String, $linkedVariants: [String!]) {\n  graph(id: $graphId) {\n    createPersistedQueryList(name: $name, description: $description, linkedVariants: $linkedVariants) {\n      ... on CreatePersistedQueryListResult {\n        persistedQueryList {\n          createdAt\n        }\n      }\n    }\n  }\n}","variables":{"graphId":"${{github.actor}}-2023-1","name":"pq_list","description":"Our PQ List","linkedVariants":["current"]}}'
+            --data '{"query":"mutation Mutation($graphId: ID!, $name: String!, $description: String, $linkedVariants: [String!]) {\n  graph(id: $graphId) {\n    createPersistedQueryList(name: $name, description: $description, linkedVariants: $linkedVariants) {\n      ... on CreatePersistedQueryListResult {\n        persistedQueryList {\n          createdAt\n        }\n      }\n    }\n  }\n}","variables":{"graphId":"${{github.actor}}${{ env.GEN }}","name":"pq_list","description":"Our PQ List","linkedVariants":["current"]}}'
       
       - name: Publish PQ List
         run: | 
@@ -79,6 +82,6 @@ jobs:
             --header 'content-type: application/json' \
             --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
             --url 'https://graphql.api.apollographql.com/api/graphql' \
-            --data '{"query":"mutation UpdateURL($name: String!, $graphId: ID!, $url: String) {\n  graph(id: $graphId) {\n    variant(name: $name) {\n      updateURL(url: $url) {\n        createdAt\n      }\n    }\n  }\n}","variables":{"name":"current","graphId":"${{github.actor}}-2023-1","url":"${{ env.URL }}"}}'
+            --data '{"query":"mutation UpdateURL($name: String!, $graphId: ID!, $url: String) {\n  graph(id: $graphId) {\n    variant(name: $name) {\n      updateURL(url: $url) {\n        createdAt\n      }\n    }\n  }\n}","variables":{"name":"current","graphId":"${{github.actor}}${{ env.GEN }}","url":"${{ env.URL }}"}}'
           
 
