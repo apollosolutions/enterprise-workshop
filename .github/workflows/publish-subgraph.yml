@@ -35,13 +35,13 @@ jobs:
     - name: Rover Subgraph Publish Orders
       run: | 
         rover subgraph publish ${{github.actor}}${{ env.GEN }}@current \
-          --name orders
+          --name orders \
           --routing-url https://subgraph-orders-j3nprurqka-ue.a.run.app \
           --schema ./orders-schema.graphql
 
     - name: Rover Subgraph Publish Customers
       run: |
         rover subgraph publish ${{github.actor}}${{ env.GEN }}@current \
-          --name customers
+          --name customers \
           --routing-url https://subgraph-customers-j3nprurqka-ue.a.run.app \
           --schema ./final/customers-schema.graphql
