@@ -3,7 +3,7 @@ name: Deploy Router to Cloud Run
 on: workflow_call
 
 env:
-  GEN: "-2023-5"
+  GEN: "-2023-6"
 
 jobs:
   deploy:
