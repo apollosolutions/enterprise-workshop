@@ -24,7 +24,7 @@ jobs:
             --header 'content-type: application/json' \
             --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
             --url 'https://graphql.api.apollographql.com/api/graphql' \
-            --data '{"query":"mutation Mutation($graphId: ID!, $name: String!, $description: String, $linkedVariants: [String!]) {\n  graph(id: $graphId) {\n    createPersistedQueryList(name: $name, description: $description, linkedVariants: $linkedVariants) {\n      ... on CreatePersistedQueryListResult {\n        persistedQueryList {\n          id\n    createdAt\n        }\n      }\n    }\n  }\n}","variables":{"graphId":"${{github.actor}}${{ env.GEN }}","name":"pq_list","description":"Our PQ List","linkedVariants":["current"]}}' -o pq.json
+            --data '{"query":"mutation Mutation($graphId: ID!, $name: String!, $description: String, $linkedVariants: [String!]) {\n  graph(id: $graphId) {\n    createPersistedQueryList(name: $name, description: $description, linkedVariants: $linkedVariants) {\n      ... on CreatePersistedQueryListResult {\n        persistedQueryList {\n          id\n    createdAt\n        }\n      }\n    }\n  }\n}","variables":{"graphId":"${{vars.ACTOR}}${{ env.GEN }}","name":"pq_list","description":"Our PQ List","linkedVariants":["current"]}}' -o pq.json
           cat pq.json
 
       - name: Set Env
@@ -40,7 +40,7 @@ jobs:
 
       - name: Publish PQ List          
         run: | 
-          rover persisted-queries publish --graph-id ${{github.actor}}${{env.GEN}} --list-id ${{env.PQ_ID}} \
+          rover persisted-queries publish --graph-id ${{vars.ACTOR}}${{env.GEN}} --list-id ${{env.PQ_ID}} \
             --manifest ./final/workshop-pq-manifest.json
 
   deploy:
@@ -58,7 +58,7 @@ jobs:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
       - name: Get URL
         run: | 
-          gcloud run services describe ${{github.actor}}-router --region us-central1 --format 'value(status.url)' > url.json
+          gcloud run services describe ${{vars.ACTOR}}-router --region us-central1 --format 'value(status.url)' > url.json
           echo "URL=$(cat url.json)" >> $GITHUB_ENV
       - name: Set URL
         run: |
@@ -66,7 +66,7 @@ jobs:
             --header 'content-type: application/json' \
             --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
             --url 'https://graphql.api.apollographql.com/api/graphql' \
-            --data '{"query":"mutation UpdateURL($name: String!, $graphId: ID!, $url: String) {\n  graph(id: $graphId) {\n    variant(name: $name) {\n      updateURL(url: $url) {\n        createdAt\n      }\n    }\n  }\n}","variables":{"name":"current","graphId":"${{github.actor}}${{ env.GEN }}","url":"${{ env.URL }}"}}'
+            --data '{"query":"mutation UpdateURL($name: String!, $graphId: ID!, $url: String) {\n  graph(id: $graphId) {\n    variant(name: $name) {\n      updateURL(url: $url) {\n        createdAt\n      }\n    }\n  }\n}","variables":{"name":"current","graphId":"${{vars.ACTOR}}${{ env.GEN }}","url":"${{ env.URL }}"}}'
 
       - name: Set Subscription URL
         run: |
@@ -74,7 +74,7 @@ jobs:
             --header 'content-type: application/json' \
             --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
             --url 'https://graphql.api.apollographql.com/api/graphql' \
-            --data '{"query":"mutation Mutation($graphId: ID!, $name: String!, $subscriptionUrl: String) {\n  graph(id: $graphId) {\n    variant(name: $name) {\n      updateSubscriptionURL(subscriptionUrl: $subscriptionUrl) {\n        createdAt\n      }\n    }\n  }\n}","variables":{"graphId":"${{github.actor}}${{ env.GEN }}","name":"current","subscriptionUrl":"${{ env.URL }}"}}'
+            --data '{"query":"mutation Mutation($graphId: ID!, $name: String!, $subscriptionUrl: String) {\n  graph(id: $graphId) {\n    variant(name: $name) {\n      updateSubscriptionURL(subscriptionUrl: $subscriptionUrl) {\n        createdAt\n      }\n    }\n  }\n}","variables":{"graphId":"${{vars.ACTOR}}${{ env.GEN }}","name":"current","subscriptionUrl":"${{ env.URL }}"}}'
   
   preflightScript:
     needs: publish
@@ -86,4 +86,4 @@ jobs:
             --header 'content-type: application/json' \
             --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
             --url 'https://graphql.api.apollographql.com/api/graphql' \
-            --data '{"query":"mutation Mutation($graphId: ID!, $name: String!, $preflightScript: String) {\n  graph(id: $graphId) {\n    variant(name: $name) {\n      updatePreflightScript(preflightScript: $preflightScript) {\n        createdAt\n      }\n    }\n  }\n}","variables":{"graphId":"${{github.actor}}${{ env.GEN }}","name":"current","preflightScript":"const API_KEY=\"AIzaSyBGEWuarfRs4vVIzbdPj7EU_h3tMAVO_e4\";console.log(\"fetching new token.....\");const getToken=async e=>{let o=await explorer.fetch(\"https:\/\/identitytoolkit.googleapis.com\/v1\/accounts:signInWithPassword?key=AIzaSyBGEWuarfRs4vVIzbdPj7EU_h3tMAVO_e4\",{method:\"POST\",header:{\"Content-Type\":\"application\/json\"},body:JSON.stringify({email:e,password:\"apolloworkshop\",returnSecureToken:!0})});return o.json()},authorizedCredentials=await getToken(\"yes@apolloworkshop.com\"),{idToken:authorizedToken}=authorizedCredentials;explorer.environment.set(\"authorizedToken\",authorizedToken),console.log(\"successfully set authorized token\");const unauthorizedCredentials=await getToken(\"no@apolloworkshop.com\"),{idToken:unauthorizedToken}=unauthorizedCredentials;explorer.environment.set(\"unauthorizedToken\",unauthorizedToken),console.log(\"successfully set token unauthorized token\");"}}'
+            --data '{"query":"mutation Mutation($graphId: ID!, $name: String!, $preflightScript: String) {\n  graph(id: $graphId) {\n    variant(name: $name) {\n      updatePreflightScript(preflightScript: $preflightScript) {\n        createdAt\n      }\n    }\n  }\n}","variables":{"graphId":"${{vars.ACTOR}}${{ env.GEN }}","name":"current","preflightScript":"const API_KEY=\"AIzaSyBGEWuarfRs4vVIzbdPj7EU_h3tMAVO_e4\";console.log(\"fetching new token.....\");const getToken=async e=>{let o=await explorer.fetch(\"https:\/\/identitytoolkit.googleapis.com\/v1\/accounts:signInWithPassword?key=AIzaSyBGEWuarfRs4vVIzbdPj7EU_h3tMAVO_e4\",{method:\"POST\",header:{\"Content-Type\":\"application\/json\"},body:JSON.stringify({email:e,password:\"apolloworkshop\",returnSecureToken:!0})});return o.json()},authorizedCredentials=await getToken(\"yes@apolloworkshop.com\"),{idToken:authorizedToken}=authorizedCredentials;explorer.environment.set(\"authorizedToken\",authorizedToken),console.log(\"successfully set authorized token\");const unauthorizedCredentials=await getToken(\"no@apolloworkshop.com\"),{idToken:unauthorizedToken}=unauthorizedCredentials;explorer.environment.set(\"unauthorizedToken\",unauthorizedToken),console.log(\"successfully set token unauthorized token\");"}}'

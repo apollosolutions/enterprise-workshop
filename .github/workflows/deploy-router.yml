@@ -24,16 +24,16 @@ jobs:
     #  uses: google-github-actions/setup-gcloud@v0
 
     - name: Create Secret for Cloud Run
-      run: gcloud secrets create ${{github.actor}}
+      run: gcloud secrets create ${{vars.ACTOR}}
       continue-on-error: true
 
     - name: Add Secret data
-      run: gcloud secrets versions add --data-file=./router/router.yaml ${{github.actor}}
+      run: gcloud secrets versions add --data-file=./router/router.yaml ${{vars.ACTOR}}
 
     - name: Depoy Apollo Router to Cloud Run
       run: |
-        gcloud run deploy ${{github.actor}}-router --image gcr.io/summit-enterprise-workshop/jesse-apollo-router:latest \
-          --set-secrets=/dist/config/router.yaml=${{github.actor}}:latest \
-          --set-env-vars "APOLLO_ROUTER_HOT_RELOAD=true,APOLLO_KEY=${{ vars.TOKEN }},APOLLO_GRAPH_REF=${{github.actor}}${{env.GEN}}@current" --platform managed --region us-central1 \
+        gcloud run deploy ${{vars.ACTOR}}-router --image gcr.io/summit-enterprise-workshop/jesse-apollo-router:latest \
+          --set-secrets=/dist/config/router.yaml=${{vars.ACTOR}}:latest \
+          --set-env-vars "APOLLO_ROUTER_HOT_RELOAD=true,APOLLO_KEY=${{ vars.TOKEN }},APOLLO_GRAPH_REF=${{vars.ACTOR}}${{env.GEN}}@current" --platform managed --region us-central1 \
           --allow-unauthenticated
 
