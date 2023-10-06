@@ -26,7 +26,6 @@ jobs:
 
     - name: Rover Subgraph Publish Products
       run: | 
-        echo "Token: ${{ env.APOLLO_KEY}}"
         rover subgraph publish ${{github.actor}}${{ env.GEN }}@current \
           --name products \
           --convert \

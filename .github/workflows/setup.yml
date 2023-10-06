@@ -43,7 +43,6 @@ jobs:
     - name: Retrieve Apollo Key
       run: | 
         echo "Add code to extract token and save as a github secret"
-        echo "Token is: ${{env.TOKEN}}"
         curl -L \
           -X POST \
           -H "Accept: application/vnd.github+json" \
