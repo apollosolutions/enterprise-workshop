@@ -8,7 +8,7 @@ on:
       - '**.yml'
 
 env:
-  GEN: "-2023-6"
+  GEN: "-2023-7"
 
 jobs:
   create:

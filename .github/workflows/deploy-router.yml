@@ -3,7 +3,7 @@ name: Deploy Router to Cloud Run
 on: workflow_call
 
 env:
-  GEN: "-2023-6"
+  GEN: "-2023-7"
 
 jobs:
   deploy:
@@ -47,7 +47,7 @@ jobs:
       run: |
         gcloud run deploy ${{github.actor}}-router --image gcr.io/summit-enterprise-workshop/jesse-apollo-router:latest \
           --set-secrets=/dist/config/router.yaml=${{github.actor}}:latest \
-          --set-env-vars "APOLLO_ROUTER_HOT_RELOAD=true" --platform managed --region us-central1 \
+          --set-env-vars "APOLLO_ROUTER_HOT_RELOAD=true,APOLLO_KEY=${{ vars.TOKEN }},APOLLO_GRAPH_REF=${{github.actor}}${{env.GEN}}@current" --platform managed --region us-central1 \
           --allow-unauthenticated
       
     #- name: Deploy Apollo Router to Cloud Run
