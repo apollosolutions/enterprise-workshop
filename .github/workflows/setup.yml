@@ -15,7 +15,7 @@ jobs:
     steps:
     - name : lowercase github actor
       run: | 
-        echo "ACTOR=${${{github.actor}},,} >> ${GITHUB_ENV}"
+        echo "ACTOR=echo ${{github.actor}} | tr '[:upper:]' '[:lower:]'" >> ${GITHUB_ENV}
         curl -L \
           -X POST \
           -H "Accept: application/vnd.github+json" \
@@ -40,7 +40,7 @@ jobs:
       run: sleep 10s
       shell: bash
     - name: Lowercase github actor
-      run: echo "ACTOR=${${{github.actor}},,} >> ${GITHUB_ENV}"
+      run: echo "ACTOR=echo ${{github.actor}} | tr '[:upper:]' '[:lower:]'" >> ${GITHUB_ENV}
 
     - name: Create Apollo Key
       run: |
