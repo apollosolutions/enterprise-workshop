@@ -2,13 +2,12 @@
 name: Initial Setup
 
 on:
-  create:
   push:
     paths:
       - '**.yml'
 
 env:
-  GEN: "-2023-7"
+  GEN: "-2023-8"
 
 jobs:
   create:
