@@ -67,6 +67,14 @@ jobs:
             --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
             --url 'https://graphql.api.apollographql.com/api/graphql' \
             --data '{"query":"mutation UpdateURL($name: String!, $graphId: ID!, $url: String) {\n  graph(id: $graphId) {\n    variant(name: $name) {\n      updateURL(url: $url) {\n        createdAt\n      }\n    }\n  }\n}","variables":{"name":"current","graphId":"${{github.actor}}${{ env.GEN }}","url":"${{ env.URL }}"}}'
+
+      - name: Set Subscription URL
+        run: |
+          curl --request POST \
+            --header 'content-type: application/json' \
+            --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
+            --url 'https://graphql.api.apollographql.com/api/graphql' \
+            --data '{"query":"mutation Mutation($graphId: ID!, $name: String!, $subscriptionUrl: String) {\n  graph(id: $graphId) {\n    variant(name: $name) {\n      updateSubscriptionURL(subscriptionUrl: $subscriptionUrl) {\n        createdAt\n      }\n    }\n  }\n}","variables":{"graphId":"${{github.actor}}${{ env.GEN }}","name":"current","subscriptionUrl":"${{ env.URL }}"}}'
   
   preflightScript:
     needs: publish
