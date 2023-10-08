@@ -29,14 +29,14 @@ jobs:
           --routing-url https://subgraph-products-j3nprurqka-ue.a.run.app \
           --schema ./products-schema.graphql
 
-    - name: Rover Subgraph Check Orders
+    - name: Rover Subgraph Publish Orders
       run: | 
         rover subgraph publish ${{vars.ACTOR}}${{ env.GEN }}@current \
           --name orders \
           --routing-url https://subgraph-orders-j3nprurqka-ue.a.run.app \
           --schema ./orders-schema.graphql
 
-    - name: Rover Subgraph Check Customers
+    - name: Rover Subgraph Publish Customers
       run: |
         rover subgraph publish ${{vars.ACTOR}}${{ env.GEN }}@current \
           --name customers \
