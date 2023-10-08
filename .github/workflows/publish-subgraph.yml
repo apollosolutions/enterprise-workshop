@@ -23,7 +23,7 @@ jobs:
 
     - name: Rover Subgraph Publish Products
       run: | 
-        rover subgraph check ${{vars.ACTOR}}${{ env.GEN }}@current \
+        rover subgraph publish ${{vars.ACTOR}}${{ env.GEN }}@current \
           --name products \
           --convert \
           --routing-url https://subgraph-products-j3nprurqka-ue.a.run.app \
