@@ -7,7 +7,7 @@ on:
       - completed
 
 env:
-  GEN: "-2023-11"
+  GEN: "workshop"
   APOLLO_KEY: ${{ secrets.APOLLO_USER_KEY }}
 
 jobs:
