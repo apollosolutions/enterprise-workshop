@@ -24,4 +24,4 @@ jobs:
         credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
     - name: Add Secret data
-      run: gcloud secrets versions add --data-file=./router/router.yaml ${{github.actor}}
+      run: gcloud secrets versions add --data-file=./router/router.yaml ${{vars.ACTOR}}
