@@ -5,7 +5,7 @@ on:
   workflow_call:
 
 env:
-  GEN: "workshop"
+  GEN: "workshop-2"
   APOLLO_KEY: ${{ vars.TOKEN }}
   
 jobs:
