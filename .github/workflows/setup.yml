@@ -18,7 +18,7 @@ jobs:
       with:
         string: ${{github.actor}}
     - id: step2
-      run: echo "ACTOR=${{ steps.string.outputs.lowercase }}" >> $GITHUB_ENV
+      run: echo "ACTOR=gh-${{ steps.string.outputs.lowercase }}" | cut -c -25   >> $GITHUB_ENV
     - name : lowercase github actor
       run: | 
         curl -L \
