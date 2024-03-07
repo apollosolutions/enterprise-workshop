@@ -5,7 +5,7 @@ on:
   workflow_call:
 
 env:
-  GEN: "ws"
+  GEN: "ws1"
 
 jobs:
   deploy:
