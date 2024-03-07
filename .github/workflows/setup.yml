@@ -16,9 +16,9 @@ jobs:
     - id: string
       uses: ASzc/change-string-case-action@v5
       with:
-        string: ${{github.actor}}
+        string: gh-${{github.actor}}
     - id: step2
-      run: echo "ACTOR=gh-${{ steps.string.outputs.lowercase }}" | cut -c -23   >> $GITHUB_ENV
+      run: echo "ACTOR=${{ steps.string.outputs.lowercase }}" | cut -c -23 >> $GITHUB_ENV
     - name : lowercase github actor
       run: | 
         curl -L \
@@ -47,7 +47,7 @@ jobs:
     - id: string
       uses: ASzc/change-string-case-action@v5
       with:
-        string: ${{github.actor}}
+        string: gh-${{github.actor}}
     - id: step2
       run: echo "ACTOR=${{ steps.string.outputs.lowercase }}" | cut -c -23 >> $GITHUB_ENV
 
