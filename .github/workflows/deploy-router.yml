@@ -5,7 +5,7 @@ on:
   workflow_call:
 
 env:
-  GEN: "workshop"
+  GEN: "ws"
 
 jobs:
   deploy:
