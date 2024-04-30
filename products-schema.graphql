@@ -139,13 +139,16 @@ type User @key(fields: "id") {
 #"""
 #A specific review by a user about a product. This contains all the high level details about a review including the body of the review.
 #"""
-#type Review @key(fields: "id") {
-#ADD REVIEW FIELDS AND RETURN TYPES HERE
-#}
+type Review @key(fields: "id") {
+  id: Int!
+  body: String!
+  product: Product!
+  user: User!
+}
 
 #"""
 #A Subscription for whenever a new review has been added.
 #"""
-#type Subscription {
-#ADD SUBSCRIPTION FIELDS AND RETURN TYPES HERE
-#}
+type Subscription {
+  reviewAdded: Review
+}
