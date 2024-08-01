@@ -7,7 +7,7 @@ on:
       - '**.yml'
 
 env:
-  GEN: "ws1"
+  GEN: ${{ secrets.GEN || 'ws1' }}
 
 jobs:
   create:
