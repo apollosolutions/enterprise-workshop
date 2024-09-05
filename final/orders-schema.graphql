@@ -1,5 +1,13 @@
 extend schema
-  @link(url: "https://specs.apollo.dev/federation/v2.5", import: ["@key", "@authenticated", "@requiresScopes"])
+  @link(url: "https://specs.apollo.dev/federation/v2.8", import:
+    [
+      "@key",
+      "@tag",
+      "@shareable",
+      "@authenticated",
+      "@requiresScopes",
+    ]
+  )
 
 type Query {
   """
@@ -29,8 +37,14 @@ type Order @key(fields: "id") {
   items: [ProductVariant!]! @requiresScopes(scopes: [["order:items"]])
 }
 
-type User @key(fields: "id", resolvable: false) {
+type User @key(fields: "id") {
   id: ID!
+  phone: String
+    @tag(name: "private")
+    @shareable
+  email: String!
+    @tag(name: "private")
+    @shareable
 }
 
 type ProductVariant @key(fields: "id", resolvable: false) {
