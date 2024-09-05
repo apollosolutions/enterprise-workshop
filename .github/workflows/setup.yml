@@ -1,0 +1,74 @@
+
+name: Initial Setup
+
+on:
+  push:
+    paths:
+      - '**.yml'
+
+env:
+  GEN: ${{ secrets.GEN || 'ws1' }}
+
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    steps:
+    - id: string
+      uses: ASzc/change-string-case-action@v5
+      with:
+        string: gh-${{github.actor}}
+    - id: step2
+      run: echo "ACTOR=${{ steps.string.outputs.lowercase }}" | cut -c -23 >> $GITHUB_ENV
+    - name : lowercase github actor
+      run: | 
+        curl -L \
+          -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.GH_KEY }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/${{github.repository}}/actions/variables \
+          -d '{"name":"actor","value":"${{ env.ACTOR }}" }'
+
+    - name: Create Graph in Apollo Studio
+      run: |
+        echo "ACTOR: ${{ env.ACTOR }}"
+        curl --request POST 'https://graphql.api.apollographql.com' \
+        --header 'content-type: application/json' \
+        --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
+        --data '{"query":"mutation Mutation($accountId: ID!, $graphType: GraphType!, $hiddenFromUninvitedNonAdmin: Boolean!, $createGraphId: ID!, $title: String!, $variantCreationConfig: VariantCreationConfig) {\n  account(id: $accountId) {\n    createGraph(graphType: $graphType, hiddenFromUninvitedNonAdmin: $hiddenFromUninvitedNonAdmin, id: $createGraphId, title: $title, variantCreationConfig: $variantCreationConfig) {\n      __typename\n      ... on Service {\n        __typename\n        id\n      }\n      ... on GraphCreationError {\n        __typename\n        message\n      }\n    }\n  }\n}","variables":{"accountId":"${{ secrets.APOLLO_ACCOUNT }}","graphType":"SELF_HOSTED_SUPERGRAPH","hiddenFromUninvitedNonAdmin":false,"createGraphId":"${{env.ACTOR}}${{ env.GEN }}","title":"${{github.actor}} - ${{ env.GEN }}","variantCreationConfig":{"variantName":"current","buildConfigInput":{"apiDirectivePassThrough":[],"buildPipelineTrack":null,"composition":{"subgraphs":[]}}}}}'
+  
+  keys:
+    needs: create
+    runs-on: ubuntu-latest
+    steps:
+    - name: Sleep
+      run: sleep 10s
+      shell: bash
+    - id: string
+      uses: ASzc/change-string-case-action@v5
+      with:
+        string: gh-${{github.actor}}
+    - id: step2
+      run: echo "ACTOR=${{ steps.string.outputs.lowercase }}" | cut -c -23 >> $GITHUB_ENV
+
+    - name: Create Apollo Key
+      run: |
+        curl --request POST 'https://graphql.api.apollographql.com' \
+        --header 'content-type: application/json' \
+        --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
+        --data '{"query":"mutation Mutation($graphId: ID!, $keyName: String, $role: UserPermission!) {\n  graph(id: $graphId) {\n    newKey(keyName: $keyName, role: $role) {\n      token\n    }\n  }\n}","variables":{"graphId":"${{env.ACTOR}}${{ env.GEN }}","keyName":"my-first-key","role":"CONTRIBUTOR"}}' -o token.json
+        cat token.json
+
+    - name: Set Env
+      run: echo "TOKEN=$(cat token.json | jq .data.graph.newKey.token)" >> $GITHUB_ENV
+
+    - name: Retrieve Apollo Key
+      run: | 
+        echo "Add code to extract token and save as a github secret"
+        curl -L \
+          -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.GH_KEY }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/${{github.repository}}/actions/variables \
+          -d '{"name":"token","value":${{ env.TOKEN }} }'

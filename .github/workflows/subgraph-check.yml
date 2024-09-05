@@ -1,0 +1,39 @@
+name: Perform subgraph check via Apollo Studio
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+env:
+  GEN: ${{ secrets.GEN || 'ws1' }}
+  APOLLO_KEY: ${{ vars.TOKEN }}
+  
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+  
+      - name: Install Rover
+        run: | 
+          curl -sSL https://rover.apollo.dev/nix/v0.19.0 | sh
+          echo "$HOME/.rover/bin" >> $GITHUB_PATH
+  
+      - name: Rover Subgraph Check Products
+        run: | 
+          rover subgraph check ${{vars.ACTOR}}${{ env.GEN }}@current \
+            --name products \
+            --schema ./products-schema.graphql
+  
+      - name: Rover Subgraph Check Orders
+        run: | 
+          rover subgraph check ${{vars.ACTOR}}${{ env.GEN }}@current \
+            --name orders \
+            --schema ./orders-schema.graphql
+  
+      - name: Rover Subgraph Check Customers
+        run: |
+          rover subgraph check ${{vars.ACTOR}}${{ env.GEN }}@current \
+            --name customers \
+            --schema ./final/customers-schema.graphql

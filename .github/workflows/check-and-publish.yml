@@ -1,0 +1,21 @@
+name: Run Subgraph Check and Publish
+
+on:
+  push:
+    paths:
+      - '**.graphql'
+  workflow_dispatch:
+  workflow_call:
+
+env:
+  GEN: ${{ secrets.GEN || 'ws1' }}
+  APOLLO_KEY: ${{ vars.TOKEN }}
+  
+jobs:
+  checks:
+    uses: ./.github/workflows/subgraph-check.yml
+    secrets: inherit
+  publish:
+    needs: checks
+    uses: ./.github/workflows/publish-subgraph.yml
+    secrets: inherit
