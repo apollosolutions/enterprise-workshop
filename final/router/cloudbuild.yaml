@@ -1,7 +1,7 @@
 steps:
 # Build the container image
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/federation-workshop/router-api', './router']
+  args: ['build', '-t', 'gcr.io/federation-workshop/router-api', '.']
 # Push the container image to Container Registry
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/federation-workshop/router-api']
