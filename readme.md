@@ -9,7 +9,6 @@
   <sub>This workshop is intended for an audience looking to learn how graph implementations are scaled across multiple teams and complex development environments leveraging Apollo GraphOS enterprise, router, and federation.</sub>
 </p>
 
-<hr>
 <br>
 
 <table>
@@ -26,6 +25,8 @@
         </tr>
     </tbody>
 </table>
+<br>
+<hr>
 
 #### ➤ Objectives
 In this workshop you will learn how to:
