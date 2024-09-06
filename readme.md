@@ -8,12 +8,14 @@
   <b>A comprehensive hands-on workshop covering GraphOS Enterprise Capabilities</b></br>
   <sub>This workshop is intended for an audience looking to learn how graph implementations are scaled across multiple teams and complex development environments leveraging Apollo GraphOS enterprise, router, and federation.</sub>
 </p>
+
+<br><br>
   
 <table>
     <tbody>
         <tr>
             <td>
-                <b>✨ Interested in an Apollonaut hosting this workshop at your organization?</b>
+                <b><sub>✨ Interested in an Apollonaut hosting this workshop at your organization?<sub></b>
             </td>
         </tr>
         <tr>
@@ -23,6 +25,8 @@
         </tr>
     </tbody>
 </table>
+
+<hr>
 
 #### ➤ Objectives
 In this workshop you will learn how to:
