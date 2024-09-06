@@ -9,24 +9,23 @@
   <sub>This workshop is intended for an audience looking to learn how graph implementations are scaled across multiple teams and complex development environments leveraging Apollo GraphOS enterprise, router, and federation.</sub>
 </p>
 
-<br><br>
-  
+<hr>
+<br>
+
 <table>
     <tbody>
         <tr>
             <td>
-                <b><sub>✨ Interested in an Apollonaut hosting this workshop at your organization?<sub></b>
+                <b><sub>🚀 Interested in an Apollonaut hosting this workshop at your organization?<sub></b>
             </td>
         </tr>
         <tr>
             <td>
-                <sub>We run this workshop across large audiences and organizations and find that more than <b>90%</b> of participants complete the workshop with <i>little to no prior</i> GraphQL experience, and leave with a greater understanding of GraphQL and the value it brings to their teams.</br></br> <b>If interested in scheduling a workshop, please contact your Apollo GraphQL account team. </b></sub>
+                <sub>We run this workshop across large audiences and organizations and find that more than <b>90%</b> of participants complete the workshop with <i>little to no prior</i> GraphQL experience, and leave with a greater understanding of GraphQL and the value it brings to their teams.</br></br> <b>Schedule a workshop by contacting your Apollo GraphQL account team. </b></sub>
             </td>
         </tr>
     </tbody>
 </table>
-
-<hr>
 
 #### ➤ Objectives
 In this workshop you will learn how to:
