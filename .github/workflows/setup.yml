@@ -37,7 +37,15 @@ jobs:
         --header 'content-type: application/json' \
         --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
         --data '{"query":"mutation Mutation($accountId: ID!, $graphType: GraphType!, $hiddenFromUninvitedNonAdmin: Boolean!, $createGraphId: ID!, $title: String!, $variantCreationConfig: VariantCreationConfig) {\n  account(id: $accountId) {\n    createGraph(graphType: $graphType, hiddenFromUninvitedNonAdmin: $hiddenFromUninvitedNonAdmin, id: $createGraphId, title: $title, variantCreationConfig: $variantCreationConfig) {\n      __typename\n      ... on Service {\n        __typename\n        id\n      }\n      ... on GraphCreationError {\n        __typename\n        message\n      }\n    }\n  }\n}","variables":{"accountId":"${{ secrets.APOLLO_ACCOUNT }}","graphType":"SELF_HOSTED_SUPERGRAPH","hiddenFromUninvitedNonAdmin":false,"createGraphId":"${{env.ACTOR}}${{ env.GEN }}","title":"${{github.actor}} - ${{ env.GEN }}","variantCreationConfig":{"variantName":"current","buildConfigInput":{"apiDirectivePassThrough":[],"buildPipelineTrack": "${{ env.FED_PIPELINE }}","composition":{"subgraphs":[]}}}}}'
-  
+
+    - name: Override Fed Build Pipeline Track
+      run: |
+        echo "ACTOR: ${{ env.ACTOR }}"
+        curl --request POST 'https://graphql.api.apollographql.com' \
+          --header 'content-type: application/json' \
+          --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
+          --data '{"query":"mutation DefaultBuildPipelineTrackMutation(\n  $graphId: ID!\n  $buildPipelineTrack: BuildPipelineTrack!\n) {\n  graph(id: $graphId) {\n    defaultBuildPipelineTrack(buildPipelineTrack: $buildPipelineTrack)\n    __typename\n  }\n}", "variables": {"graphId": "${{env.ACTOR}}${{ env.GEN }}", "buildPipelineTrack": "${{ env.FED_PIPELINE }}"}}'
+
   keys:
     needs: create
     runs-on: ubuntu-latest
