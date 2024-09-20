@@ -41,4 +41,4 @@ jobs:
         rover subgraph publish ${{vars.ACTOR}}${{ env.GEN }}@current \
           --name customers \
           --routing-url https://subgraph-customers-j3nprurqka-ue.a.run.app \
-          --schema ./final/customers-schema.graphql
+          --schema ./customers-schema.graphql

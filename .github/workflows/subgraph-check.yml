@@ -36,4 +36,4 @@ jobs:
         run: |
           rover subgraph check ${{vars.ACTOR}}${{ env.GEN }}@current \
             --name customers \
-            --schema ./final/customers-schema.graphql
+            --schema ./customers-schema.graphql
