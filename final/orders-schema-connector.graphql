@@ -1,0 +1,62 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.10"
+    import: ["@key", "@tag", "@shareable", "@authenticated", "@requiresScopes"]
+  )
+  @link(
+    url: "https://specs.apollo.dev/connect/v0.1"
+    import: ["@connect", "@source"]
+  )
+  @source(
+    name: "api"
+    http: { baseURL: "https://rest-api-j3nprurqka-uc.a.run.app/api" }
+  )
+
+type Query {
+  """
+  Get a specific order by id. Meant to be used for a detailed view of an order
+  """
+  order(id: ID!): Order
+    @authenticated
+    @connect(
+      source: "api"
+      http: { GET: "/orders/{$args.id}" }
+      selection: """
+      id
+      buyer: { id: customerId }
+      items: .variantIds { id: $ }
+      """
+      entity: true
+    )
+}
+
+"""
+Returns information about a specific purchase
+"""
+type Order @key(fields: "id") {
+  """
+  Each order has a unique id which is separate from the user or items they bought
+  """
+  id: ID!
+
+  """
+  The user who made the purchase
+  """
+  buyer: User! @requiresScopes(scopes: [["order:buyer"]])
+
+  """
+  A list of all the items they purchased. This is the Variants, not the Products so we know exactly which
+  product and which size/color/feature was bought
+  """
+  items: [ProductVariant!]! @requiresScopes(scopes: [["order:items"]])
+}
+
+type User @key(fields: "id") {
+  id: ID!
+  phone: String @tag(name: "private") @shareable
+  email: String! @tag(name: "private") @shareable
+}
+
+type ProductVariant @key(fields: "id", resolvable: false) {
+  id: ID!
+}
