@@ -1,4 +1,4 @@
-name: Publish connectors starting dusubgraphs to Apollo Studio
+name: Set Repository to connectors default starting config
 
 on:
   workflow_dispatch:
