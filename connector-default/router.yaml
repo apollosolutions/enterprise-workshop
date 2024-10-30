@@ -1,0 +1,45 @@
+# Configuration of the router's HTTP server
+# Default configuration for container
+supergraph:
+  # The socket address and port to listen on
+  listen: 0.0.0.0:${env.PORT:-4000}
+  introspection: true
+
+# For demo purposes - can remove or enable homepage
+sandbox:
+  enabled: true
+homepage:
+  enabled: false
+
+cors:
+  origins:
+    - https://studio.apollographql.com
+  allow_credentials: true
+
+# This would make debugging easier, but should be a per subgraph basis for production
+include_subgraph_errors:
+  all: true # Propagate errors from all subgraphs
+
+subscription:
+  mode:
+    passthrough:
+       # docker setup, for local setup comment out the following section
+       subgraphs:
+        products:
+         path: /
+
+## Enter Workshop Module Configs Below
+
+## Authentication Module
+authentication:
+  router:
+    jwt:
+      header_name: Authorization
+      header_value_prefix: Bearer
+      jwks:
+        - url: https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com
+
+authorization:
+  require_authentication: false
+  preview_directives: 
+    enabled: true
