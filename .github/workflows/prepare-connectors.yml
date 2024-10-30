@@ -1,0 +1,30 @@
+name: Publish connectors starting dusubgraphs to Apollo Studio
+
+on:
+  workflow_dispatch:
+
+env:
+  GEN: ${{ secrets.GEN || 'ws1' }}
+  APOLLO_KEY: ${{ vars.TOKEN }}
+  
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Create report file
+      run: |
+        cp $GITHUB_WORKSPACE/connectors-default/orders-schema.graphql $GITHUB_WORKSPACE/orders-schema.graphql
+        cp $GITHUB_WORKSPACE/connectors-default/customers-schema.graphql $GITHUB_WORKSPACE/customers-schema.graphql
+        cp $GITHUB_WORKSPACE/connectors-default/products-schema.graphql $GITHUB_WORKSPACE/products-schema.graphql
+        cp $GITHUB_WORKSPACE/connectors-default/router.yaml $GITHUB_WORKSPACE/router/router.yaml
+
+    - name: Commit report
+      run: |
+        git config --global user.name 'Automated Process'
+        git config --global user.email 'automated@users.noreply.github.com'
+        git commit -am "Prep env for connectors lab"
+        git push
+  

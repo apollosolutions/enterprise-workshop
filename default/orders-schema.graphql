@@ -1,0 +1,50 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.8", import: 
+    [
+      "@key",
+      "@tag",
+      "@shareable"
+    ]
+  )
+
+type Query {
+  """
+  Get a specific order by id. Meant to be used for a detailed view of an order
+  """
+  order(id: ID!): Order 
+}
+
+"""
+Returns information about a specific purchase
+"""
+type Order @key(fields: "id") {
+  """
+  Each order has a unique id which is separate from the user or items they bought
+  """
+  id: ID!
+
+  """
+  The user who made the purchase
+  """
+  buyer: User! 
+
+  """
+  A list of all the items they purchased. This is the Variants, not the Products so we know exactly which
+  product and which size/color/feature was bought
+  """
+  items: [ProductVariant!]!
+}
+
+type User @key(fields: "id") {
+  id: ID!
+  phone: String
+    @tag(name: "private")
+    @shareable
+  email: String!
+    @tag(name: "private")
+    @shareable
+}
+
+type ProductVariant @key(fields: "id", resolvable: false) {
+  id: ID!
+}
