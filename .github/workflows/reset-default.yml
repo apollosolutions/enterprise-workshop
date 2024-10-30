@@ -1,0 +1,30 @@
+name: Reset files to default config
+
+on:
+  workflow_dispatch:
+
+env:
+  GEN: ${{ secrets.GEN || 'ws1' }}
+  APOLLO_KEY: ${{ vars.TOKEN }}
+  
+jobs:
+  reset:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Reset files
+      run: |
+        cp -f $GITHUB_WORKSPACE/default/orders-schema.graphql $GITHUB_WORKSPACE/orders-schema.graphql
+        cp -f $GITHUB_WORKSPACE/default/customers-schema.graphql $GITHUB_WORKSPACE/customers-schema.graphql
+        cp -f $GITHUB_WORKSPACE/default/products-schema.graphql $GITHUB_WORKSPACE/products-schema.graphql
+        cp -f $GITHUB_WORKSPACE/default/router.yaml $GITHUB_WORKSPACE/router/router.yaml
+
+    - name: Commit changes
+      run: |
+        git config --global user.name 'Automated Process'
+        git config --global user.email 'automated@users.noreply.github.com'
+        git commit -am "Prep env for connectors lab"
+        git push
+  

@@ -8,20 +8,20 @@ env:
   APOLLO_KEY: ${{ vars.TOKEN }}
   
 jobs:
-  publish:
+  reset:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: Create report file
+    - name: Reset files
       run: |
         cp -f $GITHUB_WORKSPACE/connector-default/orders-schema.graphql $GITHUB_WORKSPACE/orders-schema.graphql
         cp -f $GITHUB_WORKSPACE/connector-default/customers-schema.graphql $GITHUB_WORKSPACE/customers-schema.graphql
         cp -f $GITHUB_WORKSPACE/connector-default/products-schema.graphql $GITHUB_WORKSPACE/products-schema.graphql
         cp -f $GITHUB_WORKSPACE/connector-default/router.yaml $GITHUB_WORKSPACE/router/router.yaml
 
-    - name: Commit report
+    - name: Commit changes
       run: |
         git config --global user.name 'Automated Process'
         git config --global user.email 'automated@users.noreply.github.com'
