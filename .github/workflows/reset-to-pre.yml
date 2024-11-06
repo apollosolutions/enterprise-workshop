@@ -54,9 +54,9 @@ jobs:
           echo "Module folder is: $LAB"
 
           case "$LAB" in
-            safelisting)
+            progressive-override)
               echo "Using special setup for Safelisting..."
-              echo "sourceFolder=default" >> $GITHUB_OUTPUT
+              echo "sourceFolder=progressive-override" >> $GITHUB_OUTPUT
               ;;
             *)
               echo "Using 'default' folder for: $LAB"
