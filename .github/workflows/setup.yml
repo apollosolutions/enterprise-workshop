@@ -5,10 +5,12 @@ on:
   push:
     paths:
       - '**.yml'
-
+  workflow_dispatch:
+  workflow_call:
+  
 env:
   GEN: ${{ secrets.GEN || 'ws1' }}
-  FED_PIPELINE: 'FED_2_8'
+  FED_PIPELINE: 'FED_NEXT'
 
 jobs:
   create:

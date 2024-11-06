@@ -29,7 +29,3 @@ subscription:
          path: /
 
 ## Enter Workshop Module Configs Below
-limits:
-  max_depth: 5
-  max_height: 10
-  max_aliases: 3

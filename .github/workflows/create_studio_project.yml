@@ -5,9 +5,11 @@ on:
     workflows: ["Initial Setup"]
     types:
       - completed
+  workflow_dispatch:
+  workflow_call:
 
 env:
-  GEN: ${{ secrets.GEN || 'ws1' }}
+  GEN: ${{ secrets.GEN || 'ws2' }}
   APOLLO_KEY: ${{ secrets.APOLLO_USER_KEY }}
 
 jobs:
@@ -32,7 +34,7 @@ jobs:
 
       - name: Install Rover
         run: | 
-          curl -sSL https://rover.apollo.dev/nix/v0.19.0 | sh
+          curl -sSL https://rover.apollo.dev/nix/v0.27.0-preview.0 | sh
           echo "$HOME/.rover/bin" >> $GITHUB_PATH
 
       - name: Checkout
