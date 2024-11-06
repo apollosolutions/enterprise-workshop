@@ -55,7 +55,7 @@ jobs:
 
           case "$LAB" in
             progressive-override)
-              echo "Using special setup for Safelisting..."
+              echo "Using special setup for Progressive Override..."
               echo "sourceFolder=progressive-override" >> $GITHUB_OUTPUT
               ;;
             *)

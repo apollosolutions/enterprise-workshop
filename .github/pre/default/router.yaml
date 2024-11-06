@@ -23,9 +23,9 @@ include_subgraph_errors:
 subscription:
   mode:
     passthrough:
-       # docker setup, for local setup comment out the following section
-       subgraphs:
+      # docker setup, for local setup comment out the following section
+      subgraphs:
         products:
-         path: /
+          path: /
 
 ## Enter Workshop Module Configs Below
