@@ -1,20 +1,19 @@
-name: Reset Module files to initial state
-run-name: Reset Module '${{ github.event.inputs.module }}' to initial state
+name: Reset Module files to final state
+run-name: Set Module '${{ github.event.inputs.module }}' to final state
 
 on:
   workflow_dispatch:
     inputs:
       module:
         type: choice
-        description: 'Which module are you starting?'
+        description: 'Which module are you running?'
         required: true
         default: 'connectors'
         options: # these should be the same as the pre and post folders
           - Operation Limits # -> operation-limits (default folder)
           - Safelisting # -> safelisting (special folder)
-          - Authentication and Authorization # -> auth-and-authz (default folder)
+          - Authentication and Authorization # -> authn-and-authz (default folder)
           - Coprocessor # -> coprocessor (default folder)
-          - Schema Proposals # -> schema-proposals (default folder)
           - Progressive Override # -> progressive-override (default folder)
           - Federated Subscriptions # -> federated-subscriptions (default folder)
           - Apollo Connectors # -> apollo-connectors (default folder)
@@ -58,9 +57,26 @@ jobs:
           echo "Module folder is: $LAB"
 
           case "$LAB" in
+            operation-limits)
+              echo "sourceFolder=operation-limits" >> $GITHUB_OUTPUT
+              ;;
+            safelisting)
+              echo "sourceFolder=safelisting" >> $GITHUB_OUTPUT
+              ;;
+            authentication-and-authorization)
+              echo "sourceFolder=authn-and-authz" >> $GITHUB_OUTPUT
+              ;;
+            coprocessor)
+              echo "sourceFolder=coprocessor" >> $GITHUB_OUTPUT
+              ;;
             progressive-override)
-              echo "Using special setup for Progressive Override..."
               echo "sourceFolder=progressive-override" >> $GITHUB_OUTPUT
+              ;;
+            federated-subscriptions)
+              echo "sourceFolder=federated-subscriptions" >> $GITHUB_OUTPUT
+              ;;
+             apollo-connectors)
+              echo "sourceFolder=apollo-connectors" >> $GITHUB_OUTPUT
               ;;
             *)
               echo "Using 'default' folder for: $LAB"
@@ -72,7 +88,7 @@ jobs:
         id: reset
         run: |
           echo "Checking files from $GITHUB_WORKSPACE..."
-          SRC="./.github/pre/${{ steps.folder.outputs.sourceFolder }}"
+          SRC="./.github/post/${{ steps.folder.outputs.sourceFolder }}"
           TRG="."
           MOD=false
           ROUTER_MOD=false
@@ -122,7 +138,7 @@ jobs:
           if [ "$MODIFIED" = "true" ] || [ "$ROUTER_MODIFIED" = "true" ]; then
             git config --global user.name 'Automated Process'
             git config --global user.email 'automated@users.noreply.github.com'
-            git commit -am "Pre env for ${{ github.event.inputs.module }} module"
+            git commit -am "Post env for ${{ github.event.inputs.module }} module"
             git push
           else
             echo "No changes to commit"

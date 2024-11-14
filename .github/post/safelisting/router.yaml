@@ -28,4 +28,12 @@ subscription:
       subgraphs:
         products:
           path: /
+
 ## Enter Workshop Module Configs Below
+persisted_queries:
+  enabled: true
+  safelist:
+    enabled: true
+    require_id: false
+apq:
+  enabled: false

@@ -28,4 +28,11 @@ subscription:
       subgraphs:
         products:
           path: /
+
 ## Enter Workshop Module Configs Below
+coprocessor:
+  url: https://coprocessor-wn3vwa6nlq-ue.a.run.app
+  timeout: 2s
+  router:
+    response:
+      body: true

@@ -31,17 +31,18 @@ authentication:
 
 authorization:
   require_authentication: false
-  preview_directives: 
+  preview_directives:
     enabled: true
 
 # Subscriptions Module
 subscription:
+  enabled: true
   mode:
     passthrough:
-       # docker setup, for local setup comment out the following section
-       subgraphs:
+      # docker setup, for local setup comment out the following section
+      subgraphs:
         products:
-         path: /
+          path: /
 
 # Operation Limits
 limits:
@@ -61,9 +62,9 @@ coprocessor:
 # PQL Module
 preview_persisted_queries:
   enabled: true
-  safelist: 
+  safelist:
     enabled: true
     require_id: false
 apq:
-  enabled: false #Automated persisted queries must be disabled to use PQs 
+  enabled: false #Automated persisted queries must be disabled to use PQs
 

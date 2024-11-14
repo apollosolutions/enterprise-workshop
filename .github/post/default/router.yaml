@@ -21,11 +21,11 @@ include_subgraph_errors:
   all: true # Propagate errors from all subgraphs
 
 subscription:
+  enabled: true
   mode:
     passthrough:
-       # docker setup, for local setup comment out the following section
-       subgraphs:
+      # docker setup, for local setup comment out the following section
+      subgraphs:
         products:
-         path: /
-
+          path: /
 ## Enter Workshop Module Configs Below

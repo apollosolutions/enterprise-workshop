@@ -1,0 +1,151 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.8", import: ["@key"])
+
+type Query {
+  """
+  Get all available products to shop for. Optionally provide some search filters
+  """
+  searchProducts(searchInput: ProductSearchInput! = {}): [Product]!
+
+  """
+  Get all featured products to be listed
+  """
+  getFeaturedProducts(limit: Int): [Product]!
+
+  """
+  Get products based on a single category
+  """
+  getProductsByCategory(category: ProductCategory!, limit: Int): [Product]!
+
+  """
+  Get all available variants of products to shop for. Optionally provide some search filters
+  """
+  searchProductVariants(searchInput: VariantSearchInput! = {}): [ProductVariant]!
+
+  """
+  Get a specific product by id. Useful for the product details page or checkout page
+  """
+  product(id: ID!): Product
+
+  """
+  Get a specific variant by id. Useful for the product details page or checkout page
+  """
+  productVariant(id: ID!): ProductVariant
+}
+
+"""
+Available categories that a product can be classified as
+"""
+enum ProductCategory {
+  CLOTHING
+  TOPS
+  BOTTOMS
+  COLLECTIONS
+  WOMEN
+  MEN
+  HOODIES
+  SHORTS
+  PERFORMANCE
+  UNDERWEAR
+  ECO
+  PROMOTIONS
+  PANTS
+  RECOMMENDATIONS
+  TEES
+  YOGA
+}
+
+"""
+Search filters for when returning Products
+"""
+input ProductSearchInput {
+  "Specify part of the title of the product"
+  titleContains: String
+  "Limit the number of items returned"
+  limit: Int
+  "Specify a set of categories that the product is a part of"
+  categories: [ProductCategory]
+  featured: Boolean
+}
+
+"""
+Search filters for when returning Variants
+"""
+input VariantSearchInput {
+  sizeStartsWith: String
+}
+
+"""
+A specific product sold by our store. This contains all the high level details but is not the purchasable item.
+See Variant for more info.
+"""
+type Product @key(fields: "sku") @key(fields: "id") {
+  id: ID!
+  name: String!
+  sku: String!
+  description: String
+  images: [String]
+  price: Float!
+  attributes: [Attribute]
+  variants: [ProductVariant]
+  featured: Boolean!
+  shortDescription: String
+}
+
+type Attribute {
+  name: String!
+  values: [String]!
+}
+
+"""
+A variant of a product which is a unique combination of attributes like size and color
+Variants are the entities that are added to carts and purchased
+"""
+type ProductVariant @key(fields: "id") {
+  id: ID!
+  """
+  Link back to the parent Product SKU
+  """
+  parent: Product
+
+  """
+  Optional color option for this variant
+  """
+  colorway: String
+
+  """
+  Price in decimals for this variant
+  """
+  price: Float!
+
+  """
+  Optional size option for this variant
+  """
+  size: String
+
+  """
+  Variant is available for purchase
+  """
+  inStock: Boolean!
+}
+
+"""
+A user account in our system
+"""
+type User @key(fields: "id") {
+  id: ID!
+}
+
+#"""
+#A specific review by a user about a product. This contains all the high level details about a review including the body of the review.
+#"""
+#type Review @key(fields: "id") {
+#ADD REVIEW FIELDS AND RETURN TYPES HERE
+#}
+
+#"""
+#A Subscription for whenever a new review has been added.
+#"""
+#type Subscription {
+#ADD SUBSCRIPTION FIELDS AND RETURN TYPES HERE
+#}
