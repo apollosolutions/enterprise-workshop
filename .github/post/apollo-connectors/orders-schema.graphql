@@ -1,16 +1,32 @@
 extend schema
-  @link(url: "https://specs.apollo.dev/federation/v2.8", import: 
-    [
-      "@key",
-      "@tag"
-    ]
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.10"
+    import: ["@key", "@tag", "@shareable"]
+  )
+  @link(
+    url: "https://specs.apollo.dev/connect/v0.1"
+    import: ["@connect", "@source"]
+  )
+  @source(
+    name: "api"
+    http: { baseURL: "https://rest-api-j3nprurqka-uc.a.run.app/api" }
   )
 
 type Query {
   """
   Get a specific order by id. Meant to be used for a detailed view of an order
   """
-  order(id: ID!): Order 
+  order(id: ID!): Order
+    @connect(
+      source: "api"
+      http: { GET: "/orders/{$args.id}" }
+      selection: """
+      id
+      buyer: { id: $.customerId }
+      items: $.variantIds { id: $ }
+      """
+      entity: true
+    )
 }
 
 """
@@ -25,7 +41,7 @@ type Order @key(fields: "id") {
   """
   The user who made the purchase
   """
-  buyer: User! 
+  buyer: User!
 
   """
   A list of all the items they purchased. This is the Variants, not the Products so we know exactly which

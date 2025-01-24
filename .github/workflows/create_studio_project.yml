@@ -2,7 +2,7 @@ name: Setup Studio Account
 
 on:
   workflow_run:
-    workflows: ["Initial Setup"]
+    workflows: ['Initial Setup']
     types:
       - completed
 
@@ -31,15 +31,15 @@ jobs:
         run: echo "PQ_ID=$(cat pq.json | jq .data.graph.createPersistedQueryList.persistedQueryList.id)" >> $GITHUB_ENV
 
       - name: Install Rover
-        run: | 
-          curl -sSL https://rover.apollo.dev/nix/v0.19.0 | sh
+        run: |
+          curl -sSL https://rover.apollo.dev/nix/v0.27.0-preview.0 | sh
           echo "$HOME/.rover/bin" >> $GITHUB_PATH
 
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Publish PQ List          
-        run: | 
+      - name: Publish PQ List
+        run: |
           rover persisted-queries publish --graph-id ${{vars.ACTOR}}${{env.GEN}} --list-id ${{env.PQ_ID}} \
             --manifest ./final/workshop-pq-manifest.json
 
@@ -51,13 +51,13 @@ jobs:
   install-url:
     needs: deploy
     runs-on: ubuntu-latest
-    steps: 
-      - id: "auth"
-        uses: "google-github-actions/auth@v0"
+    steps:
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v0'
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
       - name: Get URL
-        run: | 
+        run: |
           gcloud run services describe ${{vars.ACTOR}}-router --region us-central1 --format 'value(status.url)' > url.json
           echo "URL=$(cat url.json)" >> $GITHUB_ENV
       - name: Set URL
@@ -75,7 +75,7 @@ jobs:
             --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
             --url 'https://graphql.api.apollographql.com/api/graphql' \
             --data '{"query":"mutation Mutation($graphId: ID!, $name: String!, $subscriptionUrl: String) {\n  graph(id: $graphId) {\n    variant(name: $name) {\n      updateSubscriptionURL(subscriptionUrl: $subscriptionUrl) {\n        createdAt\n      }\n    }\n  }\n}","variables":{"graphId":"${{vars.ACTOR}}${{ env.GEN }}","name":"current","subscriptionUrl":"${{ env.URL }}"}}'
-  
+
   preflightScript:
     needs: publish
     runs-on: ubuntu-latest

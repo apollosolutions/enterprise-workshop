@@ -1,0 +1,167 @@
+name: Reset Module files to final state
+run-name: Set Module '${{ github.event.inputs.module }}' to final state
+
+on:
+  workflow_dispatch:
+    inputs:
+      module:
+        type: choice
+        description: 'Which module are you running?'
+        required: true
+        default: 'connectors'
+        options: # these should be the same as the pre and post folders
+          - Operation Limits # -> operation-limits (default folder)
+          - Safelisting # -> safelisting (special folder)
+          - Authentication and Authorization # -> authn-and-authz (default folder)
+          - Coprocessor # -> coprocessor (default folder)
+          - Progressive Override # -> progressive-override (default folder)
+          - Federated Subscriptions # -> federated-subscriptions (default folder)
+          - Apollo Connectors # -> apollo-connectors (default folder)
+
+env:
+  GEN: ${{ secrets.GEN || 'ws1' }}
+  APOLLO_KEY: ${{ vars.TOKEN }}
+
+jobs:
+  reset:
+    outputs:
+      files_modified: ${{ steps.commit.outputs.files_modified }}
+      router_file_modified: ${{ steps.commit.outputs.router_file_modified }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Display Original Input
+        run: |
+          echo "Original Module: '${{ github.event.inputs.module }}'"
+
+      - name: Normalize Module Name
+        id: normalize
+        run: |
+          # Retrieve the input
+          INPUT="${{ github.event.inputs.module }}"
+
+          # Convert to lowercase and replace spaces with '-'
+          NORMALIZED=$(echo "$INPUT" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+
+          # Output the normalized value
+          echo "moduleNormalized=$NORMALIZED" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Deploy Based on Module
+        id: folder
+        run: |
+          LAB="${{ steps.normalize.outputs.moduleNormalized }}"
+          echo "Module folder is: $LAB"
+
+          case "$LAB" in
+            operation-limits)
+              echo "sourceFolder=operation-limits" >> $GITHUB_OUTPUT
+              ;;
+            safelisting)
+              echo "sourceFolder=safelisting" >> $GITHUB_OUTPUT
+              ;;
+            authentication-and-authorization)
+              echo "sourceFolder=authn-and-authz" >> $GITHUB_OUTPUT
+              ;;
+            coprocessor)
+              echo "sourceFolder=coprocessor" >> $GITHUB_OUTPUT
+              ;;
+            progressive-override)
+              echo "sourceFolder=progressive-override" >> $GITHUB_OUTPUT
+              ;;
+            federated-subscriptions)
+              echo "sourceFolder=federated-subscriptions" >> $GITHUB_OUTPUT
+              ;;
+             apollo-connectors)
+              echo "sourceFolder=apollo-connectors" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "Using 'default' folder for: $LAB"
+              echo "sourceFolder=default" >> $GITHUB_OUTPUT
+              ;;
+          esac
+
+      - name: Reset files
+        id: reset
+        run: |
+          echo "Checking files from $GITHUB_WORKSPACE..."
+          SRC="./.github/post/${{ steps.folder.outputs.sourceFolder }}"
+          TRG="."
+          MOD=false
+          ROUTER_MOD=false
+
+          if ! cmp -s "$SRC/orders-schema.graphql" "$TRG/orders-schema.graphql"; then
+            echo "orders-schema.graphql are different"
+            cp -f $SRC/orders-schema.graphql $TRG/orders-schema.graphql
+            MOD=true
+          else
+            echo "orders-schema.graphql are identical"
+          fi
+
+          if ! cmp -s "$SRC/customers-schema.graphql" "$TRG/customers-schema.graphql"; then
+            echo "customers-schema.graphql are different"
+            cp -f $SRC/customers-schema.graphql $TRG/customers-schema.graphql
+            MOD=true
+          else
+            echo "customers-schema.graphql are identical"
+          fi
+
+          if ! cmp -s "$SRC/products-schema.graphql" "$TRG/products-schema.graphql"; then
+            echo "products-schema.graphql are different"
+            cp -f $SRC/products-schema.graphql $TRG/products-schema.graphql
+            MOD=true
+          else
+            echo "products-schema.graphql are identical"
+          fi
+
+          if ! cmp -s "$SRC/router.yaml" "$TRG/router/router.yaml"; then
+            echo "router.yaml are different"
+            cp -f $SRC/router.yaml $TRG/router/router.yaml
+            ROUTER_MOD=true
+          else
+            echo "router.yaml are identical"
+          fi
+
+          echo "files_modified=$MOD" >> $GITHUB_OUTPUT
+          echo "router_file_modified=$ROUTER_MOD" >> $GITHUB_OUTPUT
+
+      - name: Commit changes
+        id: commit
+        run: |
+          MODIFIED="${{ steps.reset.outputs.files_modified }}"
+          ROUTER_MODIFIED="${{ steps.reset.outputs.router_file_modified }}"
+          echo "Files modified: $MODIFIED, router: $ROUTER_MODIFIED"
+
+          if [ "$MODIFIED" = "true" ] || [ "$ROUTER_MODIFIED" = "true" ]; then
+            git config --global user.name 'Automated Process'
+            git config --global user.email 'automated@users.noreply.github.com'
+            git commit -am "Post env for ${{ github.event.inputs.module }} module"
+            git push
+          else
+            echo "No changes to commit"
+          fi
+          echo "files_modified=$MODIFIED" >> $GITHUB_OUTPUT
+          echo "router_file_modified=$ROUTER_MODIFIED" >> $GITHUB_OUTPUT
+
+  trigger-router-update:
+    needs: [reset]
+    if: ${{ needs.reset.outputs.router_file_modified == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger router update asynchronously
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          event-type: update-router-event
+
+  trigger-publish:
+    needs: [reset]
+    if: ${{ needs.reset.outputs.files_modified == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger publish asynchronously
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          event-type: publish-event

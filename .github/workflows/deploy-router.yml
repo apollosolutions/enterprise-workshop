@@ -12,29 +12,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      
-    - id: "auth"
-      uses: "google-github-actions/auth@v0"
-      with:
-        credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    #- name: Set up Google Cloud SDK
-    #  uses: google-github-actions/setup-gcloud@v0
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-    - name: Create Secret for Cloud Run
-      run: gcloud secrets create ${{vars.ACTOR}}
-      continue-on-error: true
+      #- name: Set up Google Cloud SDK
+      #  uses: google-github-actions/setup-gcloud@v0
 
-    - name: Add Secret data
-      run: gcloud secrets versions add --data-file=./router/router.yaml ${{vars.ACTOR}}
+      - name: Create Secret for Cloud Run
+        run: gcloud secrets create ${{vars.ACTOR}}
+        continue-on-error: true
 
-    - name: Depoy Apollo Router to Cloud Run
-      run: |
-        gcloud run deploy ${{vars.ACTOR}}-router --image gcr.io/summit-enterprise-workshop/jesse-apollo-router:latest \
-          --command=/dist/router \
-          --set-secrets=/dist/config/router.yaml=${{vars.ACTOR}}:latest \
-          --set-env-vars "APOLLO_ROUTER_HOT_RELOAD=true,APOLLO_KEY=${{ vars.TOKEN }},APOLLO_GRAPH_REF=${{vars.ACTOR}}${{env.GEN}}@current" --platform managed --region us-central1 \
-          --allow-unauthenticated
+      - name: Add Secret data
+        run: gcloud secrets versions add --data-file=./router/router.yaml ${{vars.ACTOR}}
 
+      - name: Depoy Apollo Router to Cloud Run
+        run: |
+          gcloud run deploy ${{vars.ACTOR}}-router --image gcr.io/summit-enterprise-workshop/router-v2_0-preview:latest \
+            --command=/dist/router \
+            --set-secrets=/dist/config/router.yaml=${{vars.ACTOR}}:latest \
+            --set-env-vars "APOLLO_ROUTER_HOT_RELOAD=true,APOLLO_KEY=${{ vars.TOKEN }},APOLLO_GRAPH_REF=${{vars.ACTOR}}${{env.GEN}}@current" --platform managed --region us-central1 \
+            --allow-unauthenticated

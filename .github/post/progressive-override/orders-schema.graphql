@@ -1,16 +1,18 @@
 extend schema
-  @link(url: "https://specs.apollo.dev/federation/v2.8", import: 
+  @link(url: "https://specs.apollo.dev/federation/v2.8", import:
     [
       "@key",
-      "@tag"
+      "@tag",
+      "@shareable"
     ]
   )
+
 
 type Query {
   """
   Get a specific order by id. Meant to be used for a detailed view of an order
   """
-  order(id: ID!): Order 
+  order(id: ID!): Order
 }
 
 """
@@ -25,7 +27,7 @@ type Order @key(fields: "id") {
   """
   The user who made the purchase
   """
-  buyer: User! 
+  buyer: User!
 
   """
   A list of all the items they purchased. This is the Variants, not the Products so we know exactly which
@@ -36,6 +38,8 @@ type Order @key(fields: "id") {
 
 type User @key(fields: "id") {
   id: ID!
+  phone: String @tag(name: "private") @shareable
+  email: String! @tag(name: "private") @shareable
 }
 
 type ProductVariant @key(fields: "id", resolvable: false) {

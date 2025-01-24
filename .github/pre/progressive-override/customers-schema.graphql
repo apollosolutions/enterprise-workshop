@@ -1,0 +1,83 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.8", import:
+    [
+      "@key",
+      "@requires",
+      "@external",
+      "@tag",
+      "@shareable"
+    ]
+  )
+
+type Query {
+  users: [User]
+  user(id: ID!): User
+}
+
+"""
+An user account in our system
+"""
+type User @key(fields: "id") {
+  id: ID!
+
+  firstName: String @tag(name: "private")
+  lastName: String @tag(name: "private")
+  address: String @tag(name: "private")
+  phone: String
+    @tag(name: "private")
+    @shareable
+  email: String!
+    @tag(name: "private")
+    @shareable
+
+  """
+  The user's active cart session. Once the cart items have been purchases, they transition to an Order
+  """
+  activeCart: Cart
+
+  """
+  The users previous purchases
+  """
+  orders(filters: OrderFilters): [Order]
+
+  paymentMethods: [PaymentMethod]
+}
+
+"""
+Search filters for when showing an users previous purchases
+"""
+input OrderFilters {
+  orderId: ID!
+  priceHigh: Float
+  priceLow: Float
+  itemsInOrder: Int
+}
+
+"""
+An user's saved cart session. Only one cart can be active at a time
+"""
+type Cart @key(fields: "owner { id }") {
+  """
+  Owner of the cart session
+  """
+  owner: User!
+  """
+  Items saved in the cart session
+  """
+  items: [ProductVariant]
+  subtotal: Float! @requires(fields: "items { price }")
+}
+
+type Order @key(fields: "id", resolvable: false) {
+  id: ID!
+}
+
+type ProductVariant @key(fields: "id", resolvable: false) {
+  id: ID!
+  price: Float! @external
+}
+
+type PaymentMethod {
+  id: ID!
+  cardNumber: String!
+}
