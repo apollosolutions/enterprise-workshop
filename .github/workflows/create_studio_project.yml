@@ -24,7 +24,7 @@ jobs:
             --header 'content-type: application/json' \
             --header 'X-API-Key: ${{ secrets.APOLLO_USER_KEY }}' \
             --url 'https://graphql.api.apollographql.com/api/graphql' \
-            --data '{"query":"mutation Mutation($graphId: ID!, $name: String!, $description: String, $linkedVariants: [String!]) {\n  graph(id: $graphId) {\n    createPersistedQueryList(name: $name, description: $description, linkedVariants: $linkedVariants) {\n      ... on CreatePersistedQueryListResult {\n        persistedQueryList {\n          id\n    createdAt\n        }\n      }\n    }\n  }\n}","variables":{"graphId":"${{vars.ACTOR}}${{ env.GEN }}","name":"pq_list","description":"Our PQ List","linkedVariants":["current"]}}' -o pq.json
+            --data '{"query":"mutation Mutation($graphId: ID!, $name: String!, $description: String) {\n  graph(id: $graphId) {\n    createPersistedQueryList(name: $name, description: $description) {\n      ... on CreatePersistedQueryListResult {\n        persistedQueryList {\n          createdAt\n        id\n  }\n      }\n    }\n  }\n}","variables":{"graphId":"${{vars.ACTOR}}${{ env.GEN }}","name":"pq_list","description":"Our PQ List"}}' -o pq.json
           cat pq.json
 
       - name: Set Env
