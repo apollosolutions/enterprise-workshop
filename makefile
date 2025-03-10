@@ -12,8 +12,6 @@ deploy-router:
 update-router:
 	gcloud secrets versions add --data-file=./router/router.yaml $(ALIAS)
 
-create-pq-list:
-
 
 configure-studio:
 	gcloud run services describe $(ALIAS)-router --region us-central1 --format 'value(status.url)' > url.json
