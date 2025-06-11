@@ -1,0 +1,19 @@
+steps:
+  # Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', 'gcr.io/summit-enterprise-workshop/apollo-mcp-server:latest',
+      '.'
+    ]
+
+  # Push the Docker image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'push', '--all-tags', 'gcr.io/summit-enterprise-workshop/apollo-mcp-server'
+    ]
+
+# Store images in Container Registry
+images:
+  - 'gcr.io/summit-enterprise-workshop/apollo-mcp-server:latest'
+
