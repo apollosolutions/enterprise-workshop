@@ -3,6 +3,10 @@ name: Deploy MCP Server to Cloud Run
 on:
   workflow_dispatch:
   workflow_call:
+  workflow_run:
+    workflows: ['Setup Studio Account']
+    types:
+      - completed
 
 env:
   GEN: ${{ secrets.GEN || 'ws1' }}
@@ -28,7 +32,7 @@ jobs:
             --platform managed \
             --allow-unauthenticated \
             --port 5000 \
-            --set-env-vars "APOLLO_KEY=${{ secrets.APOLLO_KEY }},APOLLO_GRAPH_REF=${{ secrets.APOLLO_GRAPH_REF }},ENDPOINT=${{ vars.URL }}" \
+            --set-env-vars "APOLLO_KEY=${{ vars.TOKEN }},APOLLO_GRAPH_REF=${{vars.ACTOR}}${{ env.GEN }}@current,ENDPOINT=${{ vars.URL }}" \
             --memory 512Mi \
             --cpu 1 \
             --min-instances 0 \
