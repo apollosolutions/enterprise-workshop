@@ -5,12 +5,12 @@ steps:
       [
         'build',
         '-t',
-        'gcr.io/summit-enterprise-workshop/router-v2_0-preview',
+        'gcr.io/summit-enterprise-workshop/router-v2_4_0',
         '.',
       ]
   # Push the container image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/summit-enterprise-workshop/router-v2_0-preview']
+    args: ['push', 'gcr.io/summit-enterprise-workshop/router-v2_4_0']
   # Deploy container image to Cloud Run
   # - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   #   entrypoint: gcloud
@@ -28,4 +28,4 @@ steps:
   #       # 'APOLLO_KEY=${_APOLLO_KEY},APOLLO_GRAPH_REF=${_APOLLO_GRAPH_REF}',
   #     ]
 images:
-  - gcr.io/summit-enterprise-workshop/router-v2_0-preview
+  - gcr.io/summit-enterprise-workshop/router-v2_4_0

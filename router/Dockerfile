@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 ghcr.io/apollographql/router:v2.0.0-preview.0
+FROM --platform=linux/amd64 ghcr.io/apollographql/router:v2.4.0
 
 WORKDIR /dist
 COPY router.yaml router.yaml
