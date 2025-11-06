@@ -7,7 +7,7 @@ on:
 
 env:
   GEN: ${{ secrets.GEN || 'ws1' }}
-  FED_PIPELINE: 'FED_NEXT'
+  FED_PIPELINE: 'FED_2_11'
 
 jobs:
   create:
