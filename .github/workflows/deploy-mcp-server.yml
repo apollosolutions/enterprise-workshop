@@ -17,26 +17,29 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - id: 'auth'
-        uses: 'google-github-actions/auth@v0'
+        uses: 'google-github-actions/auth@v2'
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-      - name: Depoy Apollo MCP Server to Cloud Run
+      - name: Setup Google Cloud SDK
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: Deploy Apollo MCP Server to Cloud Run
         run: |
           gcloud run deploy ${{ vars.ACTOR }}-mcp-server \
             --image gcr.io/summit-enterprise-workshop/apollo-mcp-server:latest \
             --region us-central1 \
             --platform managed \
             --allow-unauthenticated \
-            --port 5000 \
-            --set-env-vars "APOLLO_KEY=${{ vars.TOKEN }},APOLLO_GRAPH_REF=${{vars.ACTOR}}${{ env.GEN }}@current,ENDPOINT=${{ vars.URL }}" \
-            --memory 512Mi \
+            --port 8000 \
+            --set-env-vars "APOLLO_KEY=${{ vars.TOKEN }},APOLLO_GRAPH_REF=${{ vars.ACTOR }}${{ env.GEN }}@current,ENDPOINT=${{ vars.URL }}" \
+            --memory 1Gi \
             --cpu 1 \
             --min-instances 0 \
             --max-instances 10 \
-            --add-volume name=data-volume,type=in-memory,size-limit=100Mi \
-            --add-volume-mount volume=data-volume,mount-path=/data \
-            --args="-u,-i,--endpoint,${{ vars.URL }}"
+            --timeout 300s \
+            --concurrency 80 \
+            --args="/config.yaml"
