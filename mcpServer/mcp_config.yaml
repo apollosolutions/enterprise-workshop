@@ -1,0 +1,59 @@
+# Apollo MCP Server Configuration
+# This configuration uses GraphOS-managed schema and persisted queries
+
+# GraphOS credentials (can be overridden by environment variables)
+graphos:
+  apollo_key: ${APOLLO_KEY}
+  apollo_graph_ref: ${APOLLO_GRAPH_REF}
+
+# Target GraphQL endpoint
+endpoint: ${ENDPOINT}
+
+# Schema source - fetch from GraphOS Uplink
+schema:
+  source: uplink
+
+# Operations source - use GraphOS-managed persisted queries
+operations:
+  source: uplink
+
+# Transport configuration for HTTP
+transport:
+  type: streamable_http
+  port: 8000
+  address: 0.0.0.0
+  stateful_mode: true
+
+# Health check configuration
+health_check:
+  enabled: true
+  path: "/health"
+
+# CORS configuration for browser clients
+cors:
+  enabled: true
+  allow_any_origin: true
+  allow_methods: ["GET", "POST", "OPTIONS"]
+  allow_headers: ["content-type", "mcp-protocol-version", "mcp-session-id", "traceparent", "tracestate"]
+  expose_headers: ["mcp-session-id", "traceparent", "tracestate"]
+  max_age: 86400
+
+# Enable introspection tools
+introspection:
+  introspect:
+    enabled: true
+    minify: true
+  search:
+    enabled: true
+    minify: true
+  validate:
+    enabled: true
+
+# Security overrides
+overrides:
+  mutation_mode: "explicit"  # Only allow explicitly defined mutations
+  enable_explorer: true
+
+# Logging configuration
+logging:
+  level: "info"
