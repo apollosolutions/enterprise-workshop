@@ -27,6 +27,7 @@ jobs:
       - name: Setup Google Cloud SDK
         uses: 'google-github-actions/setup-gcloud@v2'
 
+
       - name: Deploy Apollo MCP Server to Cloud Run
         run: |
           gcloud run deploy ${{ vars.ACTOR }}-mcp-server \
@@ -41,5 +42,4 @@ jobs:
             --min-instances 0 \
             --max-instances 10 \
             --timeout 300s \
-            --concurrency 80 \
-            --args="/config.yaml"
+            --concurrency 80
