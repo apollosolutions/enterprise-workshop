@@ -33,7 +33,7 @@ In this workshop you will learn how to:
 - Secure your supergraph
 - Support real-time use cases with federated subscriptions
 - Extend your supergraph with coprocessors
-- Incrementally transfer ownerhsip of fields
+- Incrementally transfer ownership of fields
 
 Afterwards, you'll be able to answer:
 - How your organization can leverage GraphOS enterprise capabilities
@@ -63,7 +63,7 @@ This workshop covers the following:
 ## ➤ Maintainers
 This workshop is maintained by the following core individuals:
 
-- **Keith Halsall** - [@ausimity](https://github.com/ausimity])
+- **Keith Halsall** - [@ausimity](https://github.com/ausimity)
 - **Brandon Him** - [@brh55](https://github.com/brh55)
 - **Tobi Abedisi** - [@tobi-adebisi](https://github.com/tobi-adebisi)
 - **Michael Berger** - [@berger-michael](https://github.com/berger-michael)
